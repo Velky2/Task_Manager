@@ -65,7 +65,7 @@ class UserCommands:
             return
 
         nota = input("Nota: ")
-        data = input("Data: ")
+        data = input("Data (ano mes dia): ")
         tags_str = input("Tags(espaco para separar): ")
         tags = tags_str.split()
         prioridade = int(input("Prioridade (int): "))
@@ -75,7 +75,7 @@ class UserCommands:
             titulo=titulo,
             lista_associada=lista_associada,
             nota=nota,
-            data=data,
+            data=date(data.split),
             tags=tags,
             prioridade=prioridade,
             repeticao=repeticao,
