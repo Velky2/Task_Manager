@@ -112,7 +112,7 @@ class UserCommands:
                 except ValueError:
                     print("Somente escreva números inteiros")
                     continue
-                
+
                 if repeticao > 4 or repeticao < 0:
                     print("Insira um valor entre 0 e 4")
                 else:
@@ -215,6 +215,8 @@ class UserCommands:
         clear_screen()
         for lista in listas:
             print(lista)
+            for t in lista.tarefas:
+                print(t.titulo, " | ")
             print()
     
     @staticmethod
