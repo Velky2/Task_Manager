@@ -96,11 +96,8 @@ class UserCommands:
             repeticao=repeticao,
             concluida=False
         )
-
-            lista.adicionar_tarefa(nova_tarefa)
-            print("Feito :D")
-        else:
-            print("Lista não encontrada")
+        lista.adicionar_tarefa(nova_tarefa)
+        print("Feito :D")
     
     @staticmethod
     def adicionar_lista():
