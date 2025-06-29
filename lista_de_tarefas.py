@@ -296,6 +296,36 @@ class UserCommands:
             print("Feito :D")
         else:
             print("Lista não encontrada")
+    
+    @staticmethod
+    def concluir_tarefa() -> None:
+        clear_screen()
+        print("Selecione a tarefa que foi concluída:")
+        for l in listas:
+            for t in l.tarefas:
+                print(f"Titulo: {t.titulo} - ID: {t.id}")
+        tarefa_id = int(input("ID: "))
+
+        tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
+
+        if not tarefa:
+            return
+        elif tarefa.repeticao == 0:
+            pass
+            #TODO Nenhuma
+        elif tarefa.repeticao == 1:
+            pass
+            #TODO Diario
+        elif tarefa.repeticao == 2:
+            pass
+            #TODO Semanal
+        elif tarefa.repeticao == 3:
+            pass
+            #TODO Mensal
+        elif tarefa.repeticao == 4:
+            pass
+            #TODO Anual
+
 
 def main() -> None:
     UserCommands.ajuda()
