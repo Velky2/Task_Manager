@@ -66,10 +66,6 @@ class UserCommands:
 
         lista = UserCommands.encontrar_lista_pelo_id(lista_associada)
         
-        if not lista:
-            print("Lista não encontrada")
-            return
-
         nota = input("Nota: ")
         data_str = input("Data (DD/MM/AAAA): ")
         if data_str:
@@ -96,11 +92,8 @@ class UserCommands:
             repeticao=repeticao,
             concluida=False
         )
-
-            lista.adicionar_tarefa(nova_tarefa)
-            print("Feito :D")
-        else:
-            print("Lista não encontrada")
+        lista.adicionar_tarefa(nova_tarefa)
+        print("Feito :D")
     
     @staticmethod
     def adicionar_lista():
