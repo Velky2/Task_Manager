@@ -34,7 +34,7 @@ class UserCommands:
         # It could get a bit pulluted though
 
     @staticmethod
-    def encontrar_tarefa_pelo_id(id) -> None:
+    def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[None, None]:
         for l in listas:
             for t in l.tarefas:
                 if t.id == id:
@@ -42,7 +42,7 @@ class UserCommands:
         return None, None
     
     @staticmethod
-    def encontrar_lista_pelo_id(id) -> None:
+    def encontrar_lista_pelo_id(id: int) -> ListaDeTarefas | None:
         for l in listas:
             if l.id == id:
                 return l
@@ -62,9 +62,11 @@ class UserCommands:
             except ValueError:
                 print("Digite somente números inteiros")
             else:
+                lista = UserCommands.encontrar_lista_pelo_id(lista_associada)
+                if lista is None:
+                    print("Lista não encontrada! Digite um ID válido.")
+                    continue
                 break
-
-        lista = UserCommands.encontrar_lista_pelo_id(lista_associada)
         
         nota = input("Nota: ")
         data_str = input("Data (DD/MM/AAAA): ")
@@ -96,7 +98,7 @@ class UserCommands:
         print("Feito :D")
     
     @staticmethod
-    def adicionar_lista():
+    def adicionar_lista() -> None:
         clear_screen()
         while True:
             p = True
@@ -116,7 +118,7 @@ class UserCommands:
                 print("Já existe uma lista com esse título, tente novamente")
 
     @staticmethod
-    def remover_tarefa():
+    def remover_tarefa() -> None:
         clear_screen()
         print(bold("Escolha a tarefa que deseja remover:"))
         for l in listas:
@@ -140,7 +142,7 @@ class UserCommands:
             print("Tarefa não encontrada")
 
     @staticmethod
-    def remover_lista():
+    def remover_lista() -> None:
         clear_screen()
         print(bold("Escolha a lista que deseja remover:"))
         for l in listas:
