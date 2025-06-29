@@ -65,7 +65,16 @@ class UserCommands:
             return
 
         nota = input("Nota: ")
-        data = input("Data (ano mes dia): ")
+        data_str = input("Data (DD/MM/AAAA): ")
+        if data_str:
+            try:
+                dia, mes, ano = map(int, data_str.split('/'))
+                data_obj = date(ano, mes, dia)
+            except (ValueError, TypeError):
+                print("Formato de data inválido! Use DD/MM/AAAA")
+                return
+        else:
+            data_obj = None
         tags_str = input("Tags(espaco para separar): ")
         tags = tags_str.split()
         prioridade = int(input("Prioridade (int): "))
@@ -75,7 +84,7 @@ class UserCommands:
             titulo=titulo,
             lista_associada=lista_associada,
             nota=nota,
-            data=date(data.split),
+            data=data_obj,
             tags=tags,
             prioridade=prioridade,
             repeticao=repeticao,
@@ -308,11 +317,12 @@ class UserCommands:
 
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
 
-        if not tarefa:
+        if not tarefa or not lista:
             return
         elif tarefa.repeticao == 0:
-            pass
-            #TODO Nenhuma
+            lista.remover_tarefa(tarefa)
+            print("Feito :D")
+
         elif tarefa.repeticao == 1:
             pass
             #TODO Diario
