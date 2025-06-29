@@ -29,6 +29,7 @@ class UserCommands:
         print("=> Ver lista: mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
         print("=> Ver listas: mostra o título e o ID de todas as listas existentes")
         print("=> Ver listas e tarefas: ")
+        print("=> Concluir tarefa: Conclui uma tarefa")
         # maybe always have "Ajuda: mostra os possiveis comandos" printed to guide the user if they feel lost.
         # It could get a bit pulluted though
 
