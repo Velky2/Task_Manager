@@ -209,12 +209,21 @@ class UserCommands:
         
         if tarefa:
             print("Pressione Enter para não alterar o valor")
-
             titulo = input(f"Novo titulo ({tarefa.titulo}): ")
-            lista_associada = input(f"Novo id da lista associada ({tarefa.lista_associada}): ") # cheack if the list exist
+            
+            while True:
+                for l in listas:
+                    print(f"Titulo: {l.titulo} | ID: {l.id}")
+                lista_associada = int(input(f"Novo id da lista associada ({tarefa.lista_associada}): "))                
+                s = False
+                if UserCommands.encontrar_lista_pelo_id(lista_associada):
+                    break
+                else:
+                    print("O ID colocado não existe, tente novamente")
+
             nota = input(f"Nova nota ({tarefa.nota}): ")
             data = input(f"Nova data ({tarefa.data}): ")
-            tags_str = input(f"Novas tags (separadas por espaço)({tarefa.tags}): ")
+            tags_str = input(f"Novas tags separadas por espaço ({tarefa.tags}): ")
             prioridade = input(f"Nova prioridade ({tarefa.prioridade}): ")
             repeticao = input(f"Nova repetição ({tarefa.repeticao}): ")
             concluida = input(f"Concluida(S ou N) ({tarefa.concluida}): ")
