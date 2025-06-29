@@ -5,16 +5,10 @@ from typing import Callable
 
 from classes.tarefa import Tarefa
 from classes.lista import ListaDeTarefas
-from terminal_utils import bold
+from terminal_utils import clear_screen, bold
 
 # arquivo_tarefa = "classes.tarefa.json"
 # arquivo_lista = "classes.lista.json"
-
-def clear_screen():
-    if os.name == 'nt':
-        os.system('cls')
-    else:
-        os.system('clear')
 
 listas: list[ListaDeTarefas] = [ListaDeTarefas("Cuba")]
 
