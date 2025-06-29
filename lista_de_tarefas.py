@@ -92,17 +92,24 @@ class UserCommands:
             else:
                 data_obj = None
 
-            tags_str = input("Tags(espaco para separar): ")
+            tags_str = input("Tags (espaco para separar): ")
             tags = tags_str.split()
             
             while True:
                 try:
-                    prioridade = int(input("Prioridade (int): "))
-                    repeticao = int(input("Repeticao (int): "))
+                    prioridade = int(input("Prioridade (Sem prioridade = 0 | Baixa = 1 | Média = 2 | Alta = 3): "))
                 except ValueError:
                     print("Somente escreva números inteiros")
                 else:
                     break
+            while True:
+                try:
+                    repeticao = int(input("Repeticao (Nenhuma = 0 | Diária = 1 | Semanal = 2 | Mensal = 3 | Anual = 4): "))
+                except ValueError:
+                    print("Somente escreva números inteiros")
+                else:
+                    break
+                
 
             nova_tarefa = Tarefa(
                 titulo=titulo,
