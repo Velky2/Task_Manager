@@ -28,7 +28,7 @@ class UserCommands:
         print("=> Editar lista: edita o tĩtulo de uma lista")
         print("=> Ver lista: mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
         print("=> Ver listas: mostra o título e o ID de todas as listas existentes")
-        print("=> Ver tudo: ")
+        print("=> Ver listas e tarefas: ")
         # maybe always have "Ajuda: mostra os possiveis comandos" printed to guide the user if they feel lost.
         # It could get a bit pulluted though
 
@@ -198,12 +198,17 @@ class UserCommands:
     @staticmethod
     def editar_tarefa() -> None:
         clear_screen()
-        print("Selecione a tarefa que deseja editar:")
         for l in listas:
             for t in l.tarefas:
                 print(f"Titulo: {t.titulo} - ID: {t.id}")
         
-        tarefa_id = int(input("ID: "))
+        while True:
+            try:
+                tarefa_id = int(input(bold("Escreva o ID da tarefa que deseha editar: ")))
+            except ValueError:
+                print("Digite somente numeros inteiros")
+            else:
+                break
 
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
         
@@ -214,9 +219,10 @@ class UserCommands:
             while True:
                 for l in listas:
                     print(f"Titulo: {l.titulo} | ID: {l.id}")
-                lista_associada = int(input(f"Novo id da lista associada ({tarefa.lista_associada}): "))                
-                s = False
-                if UserCommands.encontrar_lista_pelo_id(lista_associada):
+                lista_associada = input(f"Novo id da lista associada ({tarefa.lista_associada}): ")         
+                if lista_associada == "":
+                    break
+                if UserCommands.encontrar_lista_pelo_id(int(lista_associada)):
                     break
                 else:
                     print("O ID colocado não existe, tente novamente")
