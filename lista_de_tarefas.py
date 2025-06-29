@@ -100,6 +100,10 @@ class UserCommands:
                     prioridade = int(input("Prioridade (Sem prioridade = 0 | Baixa = 1 | Média = 2 | Alta = 3): "))
                 except ValueError:
                     print("Somente escreva números inteiros")
+                    continue
+
+                if prioridade > 3 or prioridade < 0:
+                    print("Insira um valor entre 0 e 4")
                 else:
                     break
             while True:
@@ -107,6 +111,10 @@ class UserCommands:
                     repeticao = int(input("Repeticao (Nenhuma = 0 | Diária = 1 | Semanal = 2 | Mensal = 3 | Anual = 4): "))
                 except ValueError:
                     print("Somente escreva números inteiros")
+                    continue
+                
+                if repeticao > 4 or repeticao < 0:
+                    print("Insira um valor entre 0 e 4")
                 else:
                     break
                 
@@ -241,6 +249,7 @@ class UserCommands:
     @staticmethod
     def editar_tarefa() -> None:
         clear_screen()
+
         print(bold("Selecione a tarefa que deseja editar:"))
         for l in listas:
             for t in l.tarefas:
@@ -257,9 +266,15 @@ class UserCommands:
             while True:
                 for l in listas:
                     print(f"Título: {l.titulo} | ID: {l.id}")
-                lista_associada = input(f"Novo id da lista associada ({tarefa.lista_associada}): ")         
+                lista_associada = input(f"Novo id da lista associada ({tarefa.lista_associada}): ")
+                
                 if lista_associada == "":
                     break
+                try:
+                    int(lista_associada)
+                except ValueError:
+                    print("ID inválido!")
+                    continue        
                 if UserCommands.encontrar_lista_pelo_id(int(lista_associada)):
                     break
                 else:
@@ -299,6 +314,7 @@ class UserCommands:
     @staticmethod
     def editar_lista() -> None:
         clear_screen()
+
         print(bold("Selecione a lista que deseja editar:"))
         for l in listas:
             print(f"Título: {l.titulo} - ID: {l.id}")
