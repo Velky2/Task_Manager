@@ -140,14 +140,15 @@ class UserCommands:
     @staticmethod
     def ver_lista(*titulo) -> None:
         clear_screen()
-        titulo = "".join(titulo).strip('"')
+        titulo: str = "".join(titulo).strip('"').lower()
         if not titulo:
             print('Uso: ver lista "Titulo da Lista"')
             print("Listas disponiveis:", end="\n   ")
-            UserCommands.ver_listas()
+            print(*(f'("{lista.titulo}" - ID: {lista.id})' for lista in listas), sep=" | ")
+            return
         
         for lista in listas:
-            if titulo == lista.titulo:
+            if titulo == lista.titulo.lower():
                 print(lista)
                 return
     

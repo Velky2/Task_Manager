@@ -25,11 +25,15 @@ class Tarefa:
         self.repeticao = repeticao
         self.concluida = concluida
     
-    def __repr__(self) -> None:
-        print(f"Tarefa: {self.titulo}")
+    def __str__(self) -> None:
+        lines: list[str] = [f"Tarefa: {self.titulo}"]
+
         for attr in ("nota", "data", "tags", "lista_associada",
                      "prioridade", "repeticao", "concluida"):
-            print(f"- {attr.capitalize()}: {getattr(self, attr)}")
+            name: str = attr.replace("_", " ").capitalize()
+            lines.append(f"- {name}: {getattr(self, attr)}")
+        
+        return "\n".join(lines)
 
 
 if __name__ == "__main__":

@@ -9,10 +9,12 @@ class ListaDeTarefas:
         self.titulo = titulo
         self.tarefas = []
     
-    def __repr__(self) -> None:
-        print(f"===== Lista: {self.titulo} =====")
-        for tarefa in self.tarefas:
-            print(tarefa)
+    def __str__(self) -> None:
+        header: str = f"===== Lista: {self.titulo} =====\n"
+        if not self.tarefas:
+            return header + "  Não há tarefas nesta lista."
+        lines: str = "\n".join(f"{tarefa}" for tarefa in self.tarefas)
+        return header + lines
 
     def adicionar_tarefa(self, tarefa: Tarefa) -> None:
         self.tarefas.append(tarefa)
