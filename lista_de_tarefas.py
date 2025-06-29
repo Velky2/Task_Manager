@@ -194,17 +194,17 @@ class UserCommands:
                 case "ATE":
                     pass
                 
-
     @staticmethod
     def editar_tarefa() -> None:
         clear_screen()
+        print(bold("Selecione a tarefa que deseja editar:"))
         for l in listas:
             for t in l.tarefas:
                 print(f"Titulo: {t.titulo} - ID: {t.id}")
         
         while True:
             try:
-                tarefa_id = int(input(bold("Escreva o ID da tarefa que deseha editar: ")))
+                tarefa_id = int(input(bold("ID: ")))
             except ValueError:
                 print("Digite somente numeros inteiros")
             else:
@@ -264,8 +264,14 @@ class UserCommands:
         print("Selecione a lista que deseja editar:")
         for l in listas:
             print(f"Titulo: {l.titulo} - ID: {l.id}")
-        
-        lista_id = int(input("ID: "))
+
+        while True:
+            try:
+                lista_id = int(input("ID: "))
+            except ValueError:
+                print("Digite somente numeros inteiros")
+            else:
+                break
 
         lista = UserCommands.encontrar_lista_pelo_id(lista_id)
         
