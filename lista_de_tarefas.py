@@ -2,7 +2,7 @@ import json
 import os
 from datetime import date
 from typing import Callable
-
+from datetime import timedelta
 from classes.tarefa import Tarefa
 from classes.lista import ListaDeTarefas
 from terminal_utils import clear_screen, bold
@@ -311,31 +311,48 @@ class UserCommands:
     def concluir_tarefa() -> None:
         clear_screen()
         print("Selecione a tarefa que foi concluída:")
+
         for l in listas:
             for t in l.tarefas:
-                print(f"Titulo: {t.titulo} - ID: {t.id}")
-        tarefa_id = int(input("ID: "))
+                if not t.concluida:
+                    print(f"Título: {t.titulo} - ID: {t.id}")
+        try:
+            tarefa_id = int(input("ID: "))
+        except ValueError:
+            print("ID inválido!")
+            return
 
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
 
         if not tarefa or not lista:
+            print("Tarefa ou lista não encontrada!")
             return
-        elif tarefa.repeticao == 0:
-            lista.remover_tarefa(tarefa)
-            print("Feito :D")
+        tarefa.concluida = True
+        if tarefa.repeticao != 0:
+            nova_tarefa = Tarefa(
+                titulo=tarefa.titulo,
+                lista_associada=tarefa.lista_associada,
+                nota=tarefa.nota,
+                data=tarefa.data,
+                tags=tarefa.tags.copy(),
+                prioridade=tarefa.prioridade,
+                repeticao=tarefa.repeticao,
+                concluida=False
+            )
 
-        elif tarefa.repeticao == 1:
-            pass
-            #TODO Diario
-        elif tarefa.repeticao == 2:
-            pass
-            #TODO Semanal
-        elif tarefa.repeticao == 3:
-            pass
-            #TODO Mensal
-        elif tarefa.repeticao == 4:
-            pass
-            #TODO Anual
+            if tarefa.data:
+                if tarefa.repeticao == 1:  # Diária
+                    nova_tarefa.data = tarefa.data + timedelta(days=1)
+                elif tarefa.repeticao == 2:  # Semanal
+                    nova_tarefa.data = tarefa.data + timedelta(weeks=1)
+                elif tarefa.repeticao == 3:  # Mensal
+                    nova_tarefa.data = tarefa.data + timedelta(days=30)
+                elif tarefa.repeticao == 4:  # Anual
+                    nova_tarefa.data = tarefa.data.replace(year=tarefa.data.year + 1)
+                lista.adicionar_tarefa(nova_tarefa)
+                print(f"Tarefa concluída! Nova tarefa criada para {nova_tarefa.data.strftime('%d/%m/%Y')}")
+        else:
+            print("Tarefa concluída com sucesso!")
 
 
 def main() -> None:
