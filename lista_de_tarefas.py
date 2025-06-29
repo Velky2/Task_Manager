@@ -47,55 +47,77 @@ class UserCommands:
             if l.id == id:
                 return l
         return None
+    
+    @staticmethod
+    def confirmar_id_int():
+            while True:
+                try:
+                    n = int(input("ID: "))
+                except ValueError:
+                    print("ID inválido!")
+                else:
+                    return n
 
     @staticmethod
     def adicionar_tarefa() -> None:
         clear_screen()
-        titulo = input(bold("Escolha um título: "))
+        while True:
+            titulo = input(bold("Escolha um título: "))
+            if titulo == "":
+                print("O tĩtulo não pode ser vazio, tente novamente")
+            else:
+                break
 
         print("Listas disponíveis: ")
         for l in listas:
             print(f"Título: {l.titulo} | ID: {l.id}")
-        while True:
-            try:
-                lista_associada = int(input("Digite o id da lista: "))
-            except ValueError:
-                print("Digite somente números inteiros")
-            else:
-                lista = UserCommands.encontrar_lista_pelo_id(lista_associada)
-                if lista is None:
-                    print("Lista não encontrada! Digite um ID válido.")
-                    continue
-                break
         
-        nota = input("Nota: ")
-        data_str = input("Data (DD/MM/AAAA): ")
-        if data_str:
-            try:
-                dia, mes, ano = map(int, data_str.split('/'))
-                data_obj = date(ano, mes, dia)
-            except (ValueError, TypeError):
-                print("Formato de data inválido! Use DD/MM/AAAA")
-                return
-        else:
-            data_obj = None
-        tags_str = input("Tags(espaco para separar): ")
-        tags = tags_str.split()
-        prioridade = int(input("Prioridade (int): "))
-        repeticao = int(input("Repeticao (int): "))
+        lista_associada = UserCommands.confirmar_id_int()
 
-        nova_tarefa = Tarefa(
-            titulo=titulo,
-            lista_associada=lista_associada,
-            nota=nota,
-            data=data_obj,
-            tags=tags,
-            prioridade=prioridade,
-            repeticao=repeticao,
-            concluida=False
-        )
-        lista.adicionar_tarefa(nova_tarefa)
-        print("Feito :D")
+        lista = UserCommands.encontrar_lista_pelo_id(lista_associada)
+        
+        if lista:
+            nota = input("Nota: ")
+            data_str = input("Data (DD/MM/AAAA): ")
+
+            if data_str:
+                while True:
+                    try:
+                        dia, mes, ano = map(int, data_str.split('/'))
+                        data_obj = date(ano, mes, dia)
+                    except (ValueError, TypeError):
+                        print("Formato de data inválido! Use DD/MM/AAAA")
+                    else:
+                        break
+            else:
+                data_obj = None
+
+            tags_str = input("Tags(espaco para separar): ")
+            tags = tags_str.split()
+            
+            while True:
+                try:
+                    prioridade = int(input("Prioridade (int): "))
+                    repeticao = int(input("Repeticao (int): "))
+                except ValueError:
+                    print("Somente escreva números inteiros")
+                else:
+                    break
+
+            nova_tarefa = Tarefa(
+                titulo=titulo,
+                lista_associada=lista_associada,
+                nota=nota,
+                data=data_obj,
+                tags=tags,
+                prioridade=prioridade,
+                repeticao=repeticao,
+                concluida=False
+            )
+            lista.adicionar_tarefa(nova_tarefa)
+            print("Feito :D")
+        else:
+            print("Lista não encontrada")
     
     @staticmethod
     def adicionar_lista() -> None:
@@ -125,13 +147,7 @@ class UserCommands:
             for t in l.tarefas:
                 print(f"Título: {t.titulo} - ID: {t.id}")
         
-        while True:
-            try:
-                tarefa_id = int(input("ID: "))
-            except ValueError:
-                print("Digite somente números inteiros")
-            else:
-                break
+        tarefa_id = UserCommands.confirmar_id_int()
         
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
 
@@ -148,13 +164,7 @@ class UserCommands:
         for l in listas:
             print(f"Título: {l.titulo}, ID: {l.id}")
         
-        while True:
-            try:
-                lista_id = int(input("ID: "))
-            except ValueError:
-                print("Digite somente números inteiros")
-            else:
-                break
+        lista_id = UserCommands.confirmar_id_int()
 
         lista = UserCommands.encontrar_lista_pelo_id(lista_id)
 
@@ -183,7 +193,6 @@ class UserCommands:
     def ver_listas() -> None:
         clear_screen()
         # TODO: make it more robust
-        # I placed the id temporarily, idk if it is necessary
         print(*(f'("{lista.titulo}" - ID: {lista.id})' for lista in listas), sep=" | ")
     
     @staticmethod
@@ -230,13 +239,7 @@ class UserCommands:
             for t in l.tarefas:
                 print(f"Título: {t.titulo} - ID: {t.id}")
         
-        while True:
-            try:
-                tarefa_id = int(input(bold("ID: ")))
-            except ValueError:
-                print("Digite somente números inteiros")
-            else:
-                break
+        tarefa_id = UserCommands.confirmar_id_int()
 
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
         
@@ -293,13 +296,7 @@ class UserCommands:
         for l in listas:
             print(f"Título: {l.titulo} - ID: {l.id}")
 
-        while True:
-            try:
-                lista_id = int(input("ID: "))
-            except ValueError:
-                print("Digite somente números inteiros")
-            else:
-                break
+        lista_id = UserCommands.confirmar_id_int()
 
         lista = UserCommands.encontrar_lista_pelo_id(lista_id)
         
@@ -334,11 +331,8 @@ class UserCommands:
             for t in l.tarefas:
                 if not t.concluida:
                     print(f"Título: {t.titulo} - ID: {t.id}")
-        try:
-            tarefa_id = int(input("ID: "))
-        except ValueError:
-            print("ID inválido!")
-            return
+
+        tarefa_id = UserCommands.confirmar_id_int()
 
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
 
