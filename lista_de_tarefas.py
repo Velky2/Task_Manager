@@ -66,10 +66,6 @@ class UserCommands:
 
         lista = UserCommands.encontrar_lista_pelo_id(lista_associada)
         
-        if not lista:
-            print("Lista não encontrada")
-            return
-
         nota = input("Nota: ")
         data_str = input("Data (DD/MM/AAAA): ")
         if data_str:
