@@ -2,7 +2,7 @@ import json
 import os
 from datetime import date
 from typing import Callable
-
+from datetime import timedelta
 from classes.tarefa import Tarefa
 from classes.lista import ListaDeTarefas
 from terminal_utils import clear_screen, bold
@@ -29,6 +29,7 @@ class UserCommands:
         print("=> Ver lista: mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
         print("=> Ver listas: mostra o título e o ID de todas as listas existentes")
         print("=> Ver listas e tarefas: ")
+        print("=> Concluir tarefa: Conclui uma tarefa")
         # maybe always have "Ajuda: mostra os possiveis comandos" printed to guide the user if they feel lost.
         # It could get a bit pulluted though
 
@@ -65,7 +66,16 @@ class UserCommands:
             return
 
         nota = input("Nota: ")
-        data = input("Data: ")
+        data_str = input("Data (DD/MM/AAAA): ")
+        if data_str:
+            try:
+                dia, mes, ano = map(int, data_str.split('/'))
+                data_obj = date(ano, mes, dia)
+            except (ValueError, TypeError):
+                print("Formato de data inválido! Use DD/MM/AAAA")
+                return
+        else:
+            data_obj = None
         tags_str = input("Tags(espaco para separar): ")
         tags = tags_str.split()
         prioridade = int(input("Prioridade (int): "))
@@ -75,7 +85,7 @@ class UserCommands:
             titulo=titulo,
             lista_associada=lista_associada,
             nota=nota,
-            data=data,
+            data=data_obj,
             tags=tags,
             prioridade=prioridade,
             repeticao=repeticao,
@@ -195,17 +205,17 @@ class UserCommands:
                 case "ATE":
                     pass
                 
-
     @staticmethod
     def editar_tarefa() -> None:
         clear_screen()
+        print(bold("Selecione a tarefa que deseja editar:"))
         for l in listas:
             for t in l.tarefas:
                 print(f"Titulo: {t.titulo} - ID: {t.id}")
         
         while True:
             try:
-                tarefa_id = int(input(bold("Escreva o ID da tarefa que deseha editar: ")))
+                tarefa_id = int(input(bold("ID: ")))
             except ValueError:
                 print("Digite somente numeros inteiros")
             else:
@@ -265,8 +275,14 @@ class UserCommands:
         print("Selecione a lista que deseja editar:")
         for l in listas:
             print(f"Titulo: {l.titulo} - ID: {l.id}")
-        
-        lista_id = int(input("ID: "))
+
+        while True:
+            try:
+                lista_id = int(input("ID: "))
+            except ValueError:
+                print("Digite somente numeros inteiros")
+            else:
+                break
 
         lista = UserCommands.encontrar_lista_pelo_id(lista_id)
         
@@ -291,6 +307,54 @@ class UserCommands:
             print("Feito :D")
         else:
             print("Lista não encontrada")
+    
+    @staticmethod
+    def concluir_tarefa() -> None:
+        clear_screen()
+        print("Selecione a tarefa que foi concluída:")
+
+        for l in listas:
+            for t in l.tarefas:
+                if not t.concluida:
+                    print(f"Título: {t.titulo} - ID: {t.id}")
+        try:
+            tarefa_id = int(input("ID: "))
+        except ValueError:
+            print("ID inválido!")
+            return
+
+        tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
+
+        if not tarefa or not lista:
+            print("Tarefa ou lista não encontrada!")
+            return
+        tarefa.concluida = True
+        if tarefa.repeticao != 0:
+            nova_tarefa = Tarefa(
+                titulo=tarefa.titulo,
+                lista_associada=tarefa.lista_associada,
+                nota=tarefa.nota,
+                data=tarefa.data,
+                tags=tarefa.tags.copy(),
+                prioridade=tarefa.prioridade,
+                repeticao=tarefa.repeticao,
+                concluida=False
+            )
+
+            if tarefa.data:
+                if tarefa.repeticao == 1:  # Diária
+                    nova_tarefa.data = tarefa.data + timedelta(days=1)
+                elif tarefa.repeticao == 2:  # Semanal
+                    nova_tarefa.data = tarefa.data + timedelta(weeks=1)
+                elif tarefa.repeticao == 3:  # Mensal
+                    nova_tarefa.data = tarefa.data + timedelta(days=30)
+                elif tarefa.repeticao == 4:  # Anual
+                    nova_tarefa.data = tarefa.data.replace(year=tarefa.data.year + 1)
+                lista.adicionar_tarefa(nova_tarefa)
+                print(f"Tarefa concluída! Nova tarefa criada para {nova_tarefa.data.strftime('%d/%m/%Y')}")
+        else:
+            print("Tarefa concluída com sucesso!")
+
 
 def main() -> None:
     UserCommands.ajuda()
