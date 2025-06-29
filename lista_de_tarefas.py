@@ -25,7 +25,7 @@ class UserCommands:
         print("=> Remover tarefa: remove uma tarefa")
         print("=> Remover lista: remove uma lista e as tarefas que nela residem")
         print("=> Editar tarefa: edita os valores de uma tarefa, à mercê do usuário")
-        print("=> Editar lista: edita o tĩtulo de uma lista")
+        print("=> Editar lista: edita o título de uma lista")
         print("=> Ver lista: mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
         print("=> Ver listas: mostra o título e o ID de todas as listas existentes")
         print("=> Ver listas e tarefas: ")
@@ -51,13 +51,18 @@ class UserCommands:
     @staticmethod
     def adicionar_tarefa() -> None:
         clear_screen()
-        titulo = input("Escolha um título: ")
+        titulo = input(bold("Escolha um título: "))
 
-        print("Listas disponiveis: ")
+        print("Listas disponíveis: ")
         for l in listas:
-            print(f"Titulo: {l.titulo}, ID: {l.id}")
-        
-        lista_associada = int(input("Digite o id da lista: "))
+            print(f"Título: {l.titulo} | ID: {l.id}")
+        while True:
+            try:
+                lista_associada = int(input("Digite o id da lista: "))
+            except ValueError:
+                print("Digite somente números inteiros")
+            else:
+                break
 
         lista = UserCommands.encontrar_lista_pelo_id(lista_associada)
         
@@ -92,36 +97,47 @@ class UserCommands:
             concluida=False
         )
 
-        lista.adicionar_tarefa(nova_tarefa)
-        print("Feito :D")
+            lista.adicionar_tarefa(nova_tarefa)
+            print("Feito :D")
+        else:
+            print("Lista não encontrada")
     
     @staticmethod
     def adicionar_lista():
         clear_screen()
-        novo_titulo = input("Digite o titulo: ")
-        p = True
-        for l in listas:
-            if l.titulo == novo_titulo:
-                p = False
+        while True:
+            p = True
+            novo_titulo = input(bold(("Digite o título: ")))
+            if novo_titulo == "":
+                print("Digite um título não vazio")
+                continue
+            for l in listas:
+                if novo_titulo.lower() == l.titulo.lower():
+                    p = False
+            if p:
+                nova_lista = ListaDeTarefas(titulo=novo_titulo)
+                listas.append(nova_lista)
+                print("Feito :D")
                 break
-
-        if p:
-            nova_lista = ListaDeTarefas(titulo=novo_titulo)
-            listas.append(nova_lista)
-            print("Feito :D")
-        else:
-            print("Já existe lista com esse título")
+            else:
+                print("Já existe uma lista com esse título, tente novamente")
 
     @staticmethod
     def remover_tarefa():
         clear_screen()
-        print("Escolha a tarefa que deseja remover")
+        print(bold("Escolha a tarefa que deseja remover:"))
         for l in listas:
             for t in l.tarefas:
-                print(f"Titulo: {t.titulo} - ID: {t.id}")
+                print(f"Título: {t.titulo} - ID: {t.id}")
         
-        tarefa_id = int(input("ID: "))
-
+        while True:
+            try:
+                tarefa_id = int(input("ID: "))
+            except ValueError:
+                print("Digite somente números inteiros")
+            else:
+                break
+        
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
 
         if tarefa and lista:
@@ -133,11 +149,17 @@ class UserCommands:
     @staticmethod
     def remover_lista():
         clear_screen()
-        print("Escolha a lista que deseja remover:")
+        print(bold("Escolha a lista que deseja remover:"))
         for l in listas:
-            print(f"Titulo: {l.titulo}, ID: {l.id}")
+            print(f"Título: {l.titulo}, ID: {l.id}")
         
-        lista_id = int(input("ID: "))
+        while True:
+            try:
+                lista_id = int(input("ID: "))
+            except ValueError:
+                print("Digite somente números inteiros")
+            else:
+                break
 
         lista = UserCommands.encontrar_lista_pelo_id(lista_id)
 
@@ -152,8 +174,8 @@ class UserCommands:
         clear_screen()
         titulo = "".join(titulo).strip('"')
         if not titulo:
-            print('Uso: ver lista "Titulo da Lista"')
-            print("Listas disponiveis:", end="\n   ")
+            print('Uso: ver lista "Título da Lista"')
+            print("Listas disponíveis:", end="\n   ")
             UserCommands.ver_listas()
         
         for lista in listas:
@@ -210,25 +232,25 @@ class UserCommands:
         print(bold("Selecione a tarefa que deseja editar:"))
         for l in listas:
             for t in l.tarefas:
-                print(f"Titulo: {t.titulo} - ID: {t.id}")
+                print(f"Título: {t.titulo} - ID: {t.id}")
         
         while True:
             try:
                 tarefa_id = int(input(bold("ID: ")))
             except ValueError:
-                print("Digite somente numeros inteiros")
+                print("Digite somente números inteiros")
             else:
                 break
 
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
         
         if tarefa:
-            print("Pressione Enter para não alterar o valor")
-            titulo = input(f"Novo titulo ({tarefa.titulo}): ")
+            print(bold("Pressione Enter para não alterar o valor"))
+            titulo = input(f"Novo título ({tarefa.titulo}): ")
             
             while True:
                 for l in listas:
-                    print(f"Titulo: {l.titulo} | ID: {l.id}")
+                    print(f"Título: {l.titulo} | ID: {l.id}")
                 lista_associada = input(f"Novo id da lista associada ({tarefa.lista_associada}): ")         
                 if lista_associada == "":
                     break
@@ -242,7 +264,7 @@ class UserCommands:
             tags_str = input(f"Novas tags separadas por espaço ({tarefa.tags}): ")
             prioridade = input(f"Nova prioridade ({tarefa.prioridade}): ")
             repeticao = input(f"Nova repetição ({tarefa.repeticao}): ")
-            concluida = input(f"Concluida(S ou N) ({tarefa.concluida}): ")
+            concluida = input(f"Concluída(S ou N) ({tarefa.concluida}): ")
             
             if titulo:
                 tarefa.titulo = titulo
@@ -271,15 +293,15 @@ class UserCommands:
     @staticmethod
     def editar_lista() -> None:
         clear_screen()
-        print("Selecione a lista que deseja editar:")
+        print(bold("Selecione a lista que deseja editar:"))
         for l in listas:
-            print(f"Titulo: {l.titulo} - ID: {l.id}")
+            print(f"Título: {l.titulo} - ID: {l.id}")
 
         while True:
             try:
                 lista_id = int(input("ID: "))
             except ValueError:
-                print("Digite somente numeros inteiros")
+                print("Digite somente números inteiros")
             else:
                 break
 
@@ -288,15 +310,15 @@ class UserCommands:
         if lista:
             while True:
                 p = True
-                titulo = input("Novo titulo: ")
+                titulo = input("Novo título: ")
 
                 if not titulo:
-                    print("Titulo não inserido")
+                    print("Novo título não inserido")
                     continue
 
                 for l in listas:
-                    if l.titulo == titulo:
-                        print("Titulo já existente, tente novamente")
+                    if l.titulo.lower() == titulo.lower():
+                        print("Título já existente, tente novamente")
                         p = False
                         break
                 if p:
