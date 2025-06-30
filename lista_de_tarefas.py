@@ -1,8 +1,7 @@
 import json
 import os
-from datetime import date
+from datetime import date, timedelta
 from typing import Callable
-from datetime import timedelta
 from classes.tarefa import Tarefa
 from classes.lista import ListaDeTarefas
 from terminal_utils import clear_screen, bold
@@ -221,32 +220,84 @@ class UserCommands:
     
     @staticmethod
     def buscar_tarefas(*args) -> None:
-        clear_screen()
         texto: str = " ".join(args)
         if not texto:
-            print("workinprogress")
-            # TODO: default to showing them all maybe?
+            print(bold("Uso:"), 'buscar tarefas FILTRO1:"filtro" FILTRO2:"outro filtro"')
+            print("Deve-se incluir aspas ao redor de cada valor de filtro na busca.")
+            print("Deve-se usar um ou múltiplos dos filtros disponíveis:")
+            print('=> TEXTO:"foo" - busca por tarefas que contenham o texto no título, nota ou tags;')
+            print('=> LISTA_NOME: ;') # TODO: description for LISTA_NOME
+            print('=> LISTA_ID: ;') # TODO: description for LISTA_ID
+            print('=> TAGS:"bar, baz" - busca por tarefas que contenham a(s) tag(s) fornecida(s);')
+            print('    > Separe múltiplas tags por vírgula (",").')
+            print('=> ATE:"prazo" - busca por tarefas cujo prazo é até:')
+            print('    > "HOJE", ou que já estão atrasadas')
+            print('    > "7 DIAS", prazo contido nos próximos 7 dias ou já atrasadas')
+            print('    > "DD/MM/AAAA", até a data específica dada (inclui atrasadas)')
+            print('=> CONCLUIDA:"s" - busca por tarefas concluídas ("s", "sim") ou pendentes ("n", "nao");')
+            print('=> ORDENAR:"criterio" - ordena os resultados pelo critério "DATA" ou "PRIORIDADE".')
             return
-        filtros: list[str] = texto.split('"')
-        if len(filtros) == 1:
+        keywords: list[str] = texto.split('"')
+        filters: list[Callable] = []
+        if len(keywords) == 1:
             print("uhh error? where my quotes at??")
             return
-        for i in range(0, len(filtros), 2):
-            tipo: str = filtros[i].strip(" :").upper()
-            filtro: str = filtros[i + 1]
+        for i in range(0, len(keywords) - 1, 2):
+            tipo: str = keywords[i].strip(" :").upper()
+            valor: str = keywords[i + 1]
 
-            # TODO: several things 🫠
+            # TODO: not that many things perhaps 🤔
             match tipo:
                 case "TEXTO":
-                    pass
+                    filters.append(
+                        lambda tarefa: valor in tarefa.titulo
+                            or valor in tarefa.nota
+                            or any((valor in tag) for tag in tarefa.tags)
+                        )
                 case "LISTA_NOME":
-                    pass
+                    pass # TODO: busca através do nome da lista associada
                 case "LISTA_ID":
-                    pass
+                    pass # TODO: busca através do id da lista associada
                 case "TAGS":
-                    pass
+                    # TODO: fix bug when filtering by tag and by other things at
+                    # the same time? needs more testing
+                    filters.append(lambda tarefa:
+                            all((tag.strip() in tarefa.tags) for tag in valor.split(",") if tag))
                 case "ATE":
-                    pass
+                    target_date: date
+                    match valor.upper():
+                        case "HOJE":
+                            target_date = date.today()
+                        case "7 DIAS":
+                            target_date = date.today() + timedelta(days=7)
+                        case _:
+                            try:
+                                day, month, year = map(int, valor.split("/"))
+                                target_date = date(year, month, day)
+                            except (ValueError, TypeError):
+                                print('Data inválida! Use "HOJE", "7 DIAS" ou' \
+                                    ' uma data no formato "DD/MM/AAAA".')
+                                return
+                    filters.append(lambda tarefa: tarefa.data <= target_date)
+                case "CONCLUIDA":
+                    concluida: bool = valor.lower().startswith("s")
+                    filters.append(lambda tarefa: tarefa.concluida == concluida)
+                case "ORDENAR":
+                    pass # TODO: sorting (well, it's not a filter in this case,
+                         # buuut using the same syntax is the most consistent choice i think)
+                         # (and idk where else and how else we'd do it)
+
+        resultados: list[Tarefa] = []
+        for lista in listas:
+            for tarefa in lista.tarefas:
+                if all(filtro(tarefa) for filtro in filters):
+                    resultados.append(tarefa)
+        
+        if not resultados:
+            print("Nenhuma tarefa encontrada nessa busca. :/")
+            return
+        for tarefa in resultados:
+            print(tarefa)
                 
     @staticmethod
     def editar_tarefa() -> None:
@@ -395,7 +446,8 @@ class UserCommands:
 def main() -> None:
     UserCommands.ajuda()
     while True:
-        words: list[str] = input(bold("manager") + "> ").lower().split()
+        user_input: str = input(bold("manager") + "> ")
+        words: list[str] = user_input.lower().split()
         if not words:
             continue
         if len(words) == 1:
@@ -407,6 +459,10 @@ def main() -> None:
         if hasattr(UserCommands, command):
             method: Callable = getattr(UserCommands, command)
             method(*args)
+        else:
+            print(f'Comando "{bold(user_input.lower())}" não encontrado.')
+            print('Digite "ajuda" para ver os comandos disponíveis.')
+        print()
 
 if __name__ == "__main__":
     main()
