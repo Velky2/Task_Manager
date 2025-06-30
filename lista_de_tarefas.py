@@ -28,10 +28,8 @@ class UserCommands:
         print("=> Editar lista: edita o título de uma lista")
         print("=> Ver lista: mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
         print("=> Ver listas: mostra o título e o ID de todas as listas existentes")
-        print("=> Ver listas e tarefas: ")
+        print("=> Ver tudo: mostra todas as listas, as tarefas dentro delas e as propriedades das tarefas")
         print("=> Concluir tarefa: Conclui uma tarefa")
-        # maybe always have "Ajuda: mostra os possiveis comandos" printed to guide the user if they feel lost.
-        # It could get a bit pulluted though
 
     @staticmethod
     def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[None, None]:
@@ -285,9 +283,26 @@ class UserCommands:
             nota = input(f"Nova nota ({tarefa.nota}): ")
             data = input(f"Nova data ({tarefa.data}): ")
             tags_str = input(f"Novas tags separadas por espaço ({tarefa.tags}): ")
-            prioridade = input(f"Nova prioridade ({tarefa.prioridade}): ")
-            repeticao = input(f"Nova repetição ({tarefa.repeticao}): ")
-            concluida = input(f"Concluída(S ou N) ({tarefa.concluida}): ")
+            
+            while True:
+                prioridade = input(f"Nova prioridade ({tarefa.prioridade}): ")
+                if prioridade == "":
+                    break
+                try:
+                    int(prioridade)
+                except ValueError:
+                    print("Somente números inteiros são aceitos")
+                    continue
+            
+            while True:
+                repeticao = int(input(f"Nova repetição ({tarefa.repeticao}): "))
+                if repeticao == "":
+                    break
+                try:
+                    int(repeticao)
+                except ValueError:
+                    print("Somente números inteiros são aceitos")
+                    continue
             
             if titulo:
                 tarefa.titulo = titulo
@@ -300,14 +315,9 @@ class UserCommands:
             if tags_str:
                 tarefa.tags = tags_str.split()
             if prioridade:
-                tarefa.prioridade = int(prioridade)
+                tarefa.prioridade = prioridade
             if repeticao:    
-                tarefa.repeticao = int(repeticao)
-            if concluida == "S":
-                tarefa.concluida = True
-            elif concluida == "N":
-                tarefa.concluida = False
-
+                tarefa.repeticao = repeticao
             print("Feito :D")
         else:
             print("Tarefa não encontrada")
