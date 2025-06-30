@@ -18,17 +18,20 @@ class UserCommands:
     
     @staticmethod
     def ajuda() -> None:
-        print("Escreva algum dos comandos no terminal para realizar a ação:")
-        print("=> Adicionar tarefa: cria uma tarefa e a adiciona a uma lista existente")
-        print("=> Adicionar lista: cria uma lista")
-        print("=> Remover tarefa: remove uma tarefa")
-        print("=> Remover lista: remove uma lista e as tarefas que nela residem")
-        print("=> Editar tarefa: edita os valores de uma tarefa, à mercê do usuário")
-        print("=> Editar lista: edita o título de uma lista")
-        print("=> Ver lista: mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
-        print("=> Ver listas: mostra o título e o ID de todas as listas existentes")
-        print("=> Ver tudo: mostra todas as listas, as tarefas dentro delas e as propriedades das tarefas")
-        print("=> Concluir tarefa: Conclui uma tarefa")
+        print()
+        print(bold("Escreva algum dos comandos no terminal para realizar a ação:"))
+        print()
+        print(bold("=> Adicionar tarefa:"), "cria uma tarefa e a adiciona a uma lista existente")
+        print(bold("=> Adicionar lista:"), "cria uma lista")
+        print(bold("=> Remover tarefa:"), "remove uma tarefa")
+        print(bold("=> Remover lista:"), "remove uma lista e as tarefas que nela residem")
+        print(bold("=> Editar tarefa:"), "edita os valores de uma tarefa, à mercê do usuário")
+        print(bold("=> Editar lista:"), "edita o título de uma lista")
+        print(bold("=> Ver lista:"), "mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
+        print(bold("=> Ver listas:"), "mostra o título e o ID de todas as listas existentes")
+        print(bold("=> Ver tudo:"), "mostra todas as listas, as tarefas dentro delas e as propriedades das tarefas")
+        print(bold("=> Buscar tarefas:"), "mostra a lista de comandos disponíveis para encontrar tarefas com certas características")
+        print(bold("=> Concluir tarefa:"), "Conclui uma tarefa")
 
     @staticmethod
     def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[None, None]:
@@ -59,7 +62,7 @@ class UserCommands:
     def adicionar_tarefa() -> None:
         clear_screen()
         while True:
-            titulo = input(bold("Escolha um título: "))
+            titulo = input("Escolha um título: ")
             if titulo == "":
                 print("O tĩtulo não pode ser vazio, tente novamente")
             else:
@@ -157,7 +160,7 @@ class UserCommands:
         print(bold("Escolha a tarefa que deseja remover:"))
         for l in listas:
             for t in l.tarefas:
-                print(f"Título: {t.titulo} - ID: {t.id}")
+                print(f"Título: {t.titulo} | ID: {t.id}")
         
         tarefa_id = UserCommands.confirmar_id_int()
         
@@ -174,7 +177,7 @@ class UserCommands:
         clear_screen()
         print(bold("Escolha a lista que deseja remover:"))
         for l in listas:
-            print(f"Título: {l.titulo}, ID: {l.id}")
+            print(f"Título: {l.titulo} | ID: {l.id}")
         
         lista_id = UserCommands.confirmar_id_int()
 
@@ -218,22 +221,26 @@ class UserCommands:
     
     @staticmethod
     def buscar_tarefas(*args) -> None:
+        clear_screen()
         texto: str = " ".join(args)
         if not texto:
-            print(bold("Uso:"), 'buscar tarefas FILTRO1:"filtro" FILTRO2:"outro filtro"')
-            print("Deve-se incluir aspas ao redor de cada valor de filtro na busca.")
-            print("Deve-se usar um ou múltiplos dos filtros disponíveis:")
-            print('=> TEXTO:"foo" - busca por tarefas que contenham o texto no título, nota ou tags;')
-            print('=> LISTA_NOME: ;') # TODO: description for LISTA_NOME
-            print('=> LISTA_ID: ;') # TODO: description for LISTA_ID
-            print('=> TAGS:"bar, baz" - busca por tarefas que contenham a(s) tag(s) fornecida(s);')
+            print()
+            print(bold("Uso:"), bold('Buscar tarefas FILTRO1:"filtro" FILTRO2:"outro filtro"'))
+            print()
+            print("- Deve-se incluir aspas ao redor de cada valor de filtro na busca.")
+            print("- Deve-se usar um ou múltiplos dos filtros disponíveis:")
+            print()
+            print(bold('=> TEXTO:"foo"'), '- busca por tarefas que contenham o texto no título, nota ou tags;')
+            print(bold('=> LISTA_NOME: ;')) # TODO: description for LISTA_NOME
+            print(bold('=> LISTA_ID: ;')) # TODO: description for LISTA_ID
+            print(bold('=> TAGS:"bar, baz"'), '- busca por tarefas que contenham a(s) tag(s) fornecida(s);')
             print('    > Separe múltiplas tags por vírgula (",").')
-            print('=> ATE:"prazo" - busca por tarefas cujo prazo é até:')
+            print(bold('=> ATE:"prazo"'), '- busca por tarefas cujo prazo é até:')
             print('    > "HOJE", ou que já estão atrasadas')
             print('    > "7 DIAS", prazo contido nos próximos 7 dias ou já atrasadas')
             print('    > "DD/MM/AAAA", até a data específica dada (inclui atrasadas)')
-            print('=> CONCLUIDA:"s" - busca por tarefas concluídas ("s", "sim") ou pendentes ("n", "nao");')
-            print('=> ORDENAR:"criterio" - ordena os resultados pelo critério "DATA" ou "PRIORIDADE".')
+            print(bold('=> CONCLUIDA:"s"'), '- busca por tarefas concluídas ("s", "sim") ou pendentes ("n", "nao");')
+            print(bold('=> ORDENAR:"criterio"'), '- ordena os resultados pelo critério "DATA" ou "PRIORIDADE".')
             return
         keywords: list[str] = texto.split('"')
         filters: list[Callable] = []
@@ -304,20 +311,23 @@ class UserCommands:
         print(bold("Selecione a tarefa que deseja editar:"))
         for l in listas:
             for t in l.tarefas:
-                print(f"Título: {t.titulo} - ID: {t.id}")
+                print(f"Título: {t.titulo} | ID: {t.id}")
         
         tarefa_id = UserCommands.confirmar_id_int()
 
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
         
         if tarefa:
-            print(bold("Pressione Enter para não alterar o valor"))
-            titulo = input(f"Novo título ({tarefa.titulo}): ")
+            print()
+            print(bold("O valor anterior do atributo será apresentado dentro de colchetes"))
+            print("Pressione Enter para não alterar o valor")
+            print()
+            titulo = input(f"Novo título [{tarefa.titulo}]: ")
             
             while True:
                 for l in listas:
                     print(f"Título: {l.titulo} | ID: {l.id}")
-                lista_associada = input(f"Novo id da lista associada ({tarefa.lista_associada}): ")
+                lista_associada = input(f"Novo id da lista associada [{tarefa.lista_associada}]: ")
                 
                 if lista_associada == "":
                     break
@@ -331,29 +341,31 @@ class UserCommands:
                 else:
                     print("O ID colocado não existe, tente novamente")
 
-            nota = input(f"Nova nota ({tarefa.nota}): ")
-            data = input(f"Nova data ({tarefa.data}): ")
-            tags_str = input(f"Novas tags separadas por espaço ({tarefa.tags}): ")
+            nota = input(f"Nova nota [{tarefa.nota}]: ")
+            data = input(f"Nova data [{tarefa.data}]: ")
+            tags_str = input(f"Novas tags separadas por espaço [{tarefa.tags}]: ")
             
             while True:
-                prioridade = input(f"Nova prioridade ({tarefa.prioridade}): ")
+                prioridade = input(f"Nova prioridade [{tarefa.prioridade}] (Sem prioridade = 0 | Baixa = 1 | Média = 2 | Alta = 3): ")
                 if prioridade == "":
                     break
                 try:
                     int(prioridade)
                 except ValueError:
                     print("Somente números inteiros são aceitos")
-                    continue
+                else:
+                    break
             
             while True:
-                repeticao = int(input(f"Nova repetição ({tarefa.repeticao}): "))
+                repeticao = input(f"Nova repetição [{tarefa.repeticao}] (Nenhuma = 0 | Diária = 1 | Semanal = 2 | Mensal = 3 | Anual = 4): ")
                 if repeticao == "":
                     break
                 try:
                     int(repeticao)
                 except ValueError:
                     print("Somente números inteiros são aceitos")
-                    continue
+                else:
+                    break
             
             if titulo:
                 tarefa.titulo = titulo
@@ -380,7 +392,7 @@ class UserCommands:
 
         print(bold("Selecione a lista que deseja editar:"))
         for l in listas:
-            print(f"Título: {l.titulo} - ID: {l.id}")
+            print(f"Título: {l.titulo} | ID: {l.id}")
 
         lista_id = UserCommands.confirmar_id_int()
 
@@ -411,12 +423,12 @@ class UserCommands:
     @staticmethod
     def concluir_tarefa() -> None:
         clear_screen()
-        print("Selecione a tarefa que foi concluída:")
+        print(bold("Selecione a tarefa que foi concluída:"))
 
         for l in listas:
             for t in l.tarefas:
                 if not t.concluida:
-                    print(f"Título: {t.titulo} - ID: {t.id}")
+                    print(f"Título: {t.titulo} | ID: {t.id}")
 
         tarefa_id = UserCommands.confirmar_id_int()
 
