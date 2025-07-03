@@ -461,7 +461,7 @@ class UserCommands:
             return
         print(">>>>>> RESULTADOS DA BUSCA:")
         for tarefa in resultados:
-            print(tarefa)
+            UserCommands.imprimir_tarefa(tarefa)
                 
     @staticmethod
     def editar_tarefa() -> None:
