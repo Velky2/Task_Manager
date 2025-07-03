@@ -41,8 +41,8 @@ class UserCommands:
                     data_str = tarefa_dict.get("data")
                     data_obj = None
                     if data_str:
-                        day, month, year = map(int, data_str.split("/"))
-                        data_obj = date(year, month, day)
+                        dia, mes, ano = map(int, data_str.split("/"))
+                        data_obj = date(ano, mes, dia)
                     
                     nova_tarefa = Tarefa(
                         titulo=tarefa_dict["titulo"],
@@ -117,6 +117,54 @@ class UserCommands:
                     return n
     
     @staticmethod
+    def imprimir_tarefa(tarefa):
+        titulo = tarefa.titulo
+        lista_associada = tarefa.lista_associada
+        nota = tarefa.nota
+        data = tarefa.data
+        tags = tarefa.tags
+        prioridade = tarefa.prioridade
+        repetição = tarefa.repeticao
+        concluida = tarefa.concluida
+        id = tarefa.id
+
+        print(f"Tarefa: {titulo} | ID: {id}")
+        print(f"Lista associada: {lista_associada}")
+        print(f"Nota: {nota}")
+        if data:
+            ano, mes, dia = map(int, str(data).split("-"))
+            print(f"Data: {dia}/{mes}/{ano}")
+        else:
+            print("Data: ")
+
+        print(f"Tags: {tags}")
+
+        if prioridade == 0:
+            print(f"Prioridade: nenhuma")
+        elif prioridade == 1:
+            print(f"Prioridade: baixa")
+        elif prioridade == 2:
+            print(f"Prioridade: média")
+        else:
+            print(f"Prioridade: alta")
+        
+        if repetição == 0:
+            print(f"Sem repetição")
+        elif repetição == 1:
+            print(f"Repetição: diária")
+        elif repetição == 2:
+            print("Repetição: semanal")
+        elif repetição == 3:
+            print("Repetição: mensal")
+        else:
+            print("Repetição anual")
+        
+        if concluida:
+            print("Concluida: sim")
+        else:
+            print("Concluida: não")
+
+    @staticmethod
     def adicionar_tarefa() -> None:
         clear_screen()
         while True:
@@ -177,7 +225,6 @@ class UserCommands:
                 else:
                     break
                 
-
             nova_tarefa = Tarefa(
                 titulo=titulo,
                 lista_associada=lista_associada,
@@ -268,8 +315,9 @@ class UserCommands:
             return
         
         for lista in listas:
-            if titulo == lista.titulo.lower():
-                print(lista)
+            if titulo == "".join(lista.titulo).lower():
+                for t in lista.tarefas:
+                    UserCommands.imprimir_tarefa(t)
                 return
     
     @staticmethod
@@ -282,7 +330,11 @@ class UserCommands:
     def ver_tudo() -> None:
         clear_screen()
         for lista in listas:
-            print(lista)
+            for t in lista.tarefas:
+                print()
+                print(f"===== Lista: {lista.titulo} =====")
+                print()
+                UserCommands.imprimir_tarefa(t)
     
     @staticmethod
     def buscar_tarefas(*args) -> None:
