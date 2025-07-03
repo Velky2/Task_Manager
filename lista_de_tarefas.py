@@ -24,7 +24,6 @@ class UserCommands:
         
         with open(arquivo, "w") as f:
             json.dump(dados, f, indent=4)
-        print("Feito :D")
 
     @staticmethod
     def carregar_dados() -> None:
@@ -69,13 +68,27 @@ class UserCommands:
             listas = [ListaDeTarefas("Cuba")]
 
     @staticmethod
+    def salvar_mudanças():
+        while True:
+            c = input("Salvar mudanças? (S/N): ")
+            if c == "S" or c == "s":
+                UserCommands.salvar_dados()
+                print("Feito :D")
+                return
+            elif c == "N" or c == "n":
+                print("Ação cancelada")
+                return
+            else:
+                print("Digite S ou N")
+
+    @staticmethod
     def limpar_tela() -> None:
         clear_screen()
     
     @staticmethod
     def ajuda() -> None:
         print()
-        print(trm.bold("Escreva algum dos comandos no terminal para realizar a ação:"))
+        print(trm.bold("Digite algum dos comandos no terminal para realizar a ação:"))
         print()
         print(trm.bold("=> Adicionar tarefa:"), "cria uma tarefa e a adiciona a uma lista existente")
         print(trm.bold("=> Adicionar lista:"), "cria uma lista")
@@ -198,7 +211,7 @@ class UserCommands:
                 data_obj = None
 
             tags_str = input("Tags (vírgula para separar): ")
-            tags = set(tag.strip().lower() for tag in tags_str.split(","))
+            tags = set(tag.strip().lower() for tag in tags_str.split(" "))
             
             while True:
                 try:
@@ -234,8 +247,7 @@ class UserCommands:
                 concluida=False
             )
             lista.adicionar_tarefa(nova_tarefa)
-            print("Feito :D")
-            UserCommands.salvar_dados()
+            UserCommands.salvar_mudanças()
         else:
             print("Lista não encontrada")
     
@@ -254,8 +266,8 @@ class UserCommands:
             if p:
                 nova_lista = ListaDeTarefas(titulo=novo_titulo)
                 listas.append(nova_lista)
-                print("Feito :D")
-                UserCommands.salvar_dados()
+                UserCommands.salvar_mudanças()
+                return
             else:
                 print("Já existe uma lista com esse título, tente novamente")
 
@@ -273,8 +285,7 @@ class UserCommands:
 
         if tarefa and lista:
             lista.remover_tarefa(tarefa.id)
-            print("Feito :D")
-            UserCommands.salvar_dados()
+            UserCommands.salvar_mudanças()
         else:
             print("Tarefa não encontrada")
 
@@ -296,12 +307,15 @@ class UserCommands:
 
         if lista:
             confirmacao = input("Apagar a lista também excluirá todas as tarefas contidas nela. Você quer continuar com a ação? (S/N): ")
-            if confirmacao == "S":
-                listas.remove(lista)
-                print("Feito :D")
-                UserCommands.salvar_dados()
-            else:
-                print("Ação cancelada")
+            while True:
+                if confirmacao == "S" or confirmacao == "s":
+                    listas.remove(lista)
+                    UserCommands.salvar_dados()
+                    print("Feito :D")
+                elif confirmacao == "N" or confirmacao == "n":
+                    print("Ação cancelada")
+                else:
+                    print("Digite S ou N")
         else:
             print("Lista não encontrada")
     
@@ -334,10 +348,11 @@ class UserCommands:
             print()
             print(f"===== Lista: {lista.titulo} =====")
             print()
-            for t in lista.tarefas:
-                UserCommands.imprimir_tarefa(t)
+            for tarefa in lista.tarefas:
+                UserCommands.imprimir_tarefa(tarefa)
                 print()
-    
+                
+
     @staticmethod
     def buscar_tarefas(*args) -> None:
         clear_screen()
@@ -503,20 +518,27 @@ class UserCommands:
                     print("O ID colocado não existe, tente novamente")
 
             nota = input(f"Nova nota [{tarefa.nota}]: ")
-            data_str = input(f"Nova data [{tarefa.data}]: ")
-
+            
+            if tarefa.data:
+                ano, mes, dia = str(tarefa.data).split('-')
+                data_obj1 = dia + "/" + mes + "/" + ano
+            else:
+                data_obj1 = None
+            
+            data_str = input(f"Nova data [{data_obj1}]: ")
+            
             if data_str:
                 while True:
                     try:
                         dia, mes, ano = map(int, data_str.split('/'))
-                        data_obj = date(ano, mes, dia)
+                        data_obj2 = date(ano, mes, dia)
                     except (ValueError, TypeError):
                         print("Formato de data inválido! Use DD/MM/AAAA")
                         data_str = input("Data (DD/MM/AAAA): ")
                     else:
                         break
             else:
-                data_obj = None
+                data_obj2 = None
 
             tags_str = input(f"Novas tags separadas por vírgula (substituirão as antigas) [{tarefa.tags}]: ")
             
@@ -548,16 +570,15 @@ class UserCommands:
                 tarefa.lista_associada = lista_associada
             if nota:    
                 tarefa.nota = nota
-            if data_obj:
-                tarefa.data = data_obj
+            if data_obj2:
+                tarefa.data = data_obj2
             if tags_str:
-                tarefa.tags = set(tag.strip().lower() for tag in tags_str.split(","))
+                tarefa.tags = set(tag.strip().lower() for tag in tags_str.split(" "))
             if prioridade:
                 tarefa.prioridade = prioridade
             if repeticao:    
                 tarefa.repeticao = repeticao
-            print("Feito :D")
-            UserCommands.salvar_dados()
+            UserCommands.salvar_mudanças()
         else:
             print("Tarefa não encontrada")
 
@@ -591,8 +612,7 @@ class UserCommands:
                     break
 
             lista.titulo = titulo
-            print("Feito :D")
-            UserCommands.salvar_dados()
+            UserCommands.salvar_mudanças()
         else:
             print("Lista não encontrada")
     
@@ -637,7 +657,7 @@ class UserCommands:
                     nova_tarefa.data = tarefa.data.replace(year=tarefa.data.year + 1)
                 lista.adicionar_tarefa(nova_tarefa)
                 print(f"Tarefa concluída! Nova tarefa criada para {nova_tarefa.data.strftime('%d/%m/%Y')}")
-                UserCommands.salvar_dados()
+                UserCommands.salvar_mudanças()
         else:
             print("Tarefa concluída com sucesso!")
 
