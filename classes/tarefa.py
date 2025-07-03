@@ -36,10 +36,14 @@ class Tarefa:
         return "\n".join(lines)
     
     def para_dicio(self):
-        return{
+        data_json = None
+        if self.data:
+            data_json = self.data.strftime("%d/%m/%Y")
+
+        return {
             "titulo": self.titulo,
             "nota": self.nota,
-            "data": self.data,
+            "data": data_json,
             "tags": self.tags,
             "lista_associada": self.lista_associada,
             "prioridade": self.prioridade,
