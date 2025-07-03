@@ -10,7 +10,7 @@ class ListaDeTarefas:
         self.tarefas = []
     
     def __str__(self) -> None:
-        header: str = f"===== Lista: {self.titulo} =====\n"
+        header: str = f"\n===== Lista: {self.titulo} =====\n"
         if not self.tarefas:
             return header + "  Não há tarefas nesta lista."
         lines: str = "\n".join(f"{tarefa}" for tarefa in self.tarefas)

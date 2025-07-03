@@ -8,7 +8,7 @@ class Tarefa:
                 lista_associada: int,
                 nota: str = "",
                 data: date | None = None,
-                tags: list[str] = [],
+                tags: set[str] = set(),
                 prioridade: int = 0,
                 repeticao: int = 0,
                 concluida: bool = False):
@@ -26,7 +26,7 @@ class Tarefa:
         self.concluida = concluida
     
     def __str__(self) -> None:
-        lines: list[str] = [f"Tarefa: {self.titulo}"]
+        lines: list[str] = [f"\nTarefa: {self.titulo}"]
 
         for attr in ("nota", "data", "tags", "lista_associada",
                      "prioridade", "repeticao", "concluida"):
@@ -44,7 +44,7 @@ class Tarefa:
             "titulo": self.titulo,
             "nota": self.nota,
             "data": data_json,
-            "tags": self.tags,
+            "tags": list(self.tags),
             "lista_associada": self.lista_associada,
             "prioridade": self.prioridade,
             "repeticao": self.repeticao,

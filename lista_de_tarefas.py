@@ -9,11 +9,11 @@ from terminal_utils import clear_screen
 
 listas: list[ListaDeTarefas] = []
 
-arquivo = "tarefas.json"
+arquivo: str = "tarefas.json"
 
 class UserCommands:
     @staticmethod
-    def salvar_dados():
+    def salvar_dados() -> None:
         clear_screen()
         dados = {}
         for l in listas:
@@ -27,7 +27,7 @@ class UserCommands:
         print("Feito :D")
 
     @staticmethod
-    def carregar_dados():
+    def carregar_dados() -> None:
         global listas
         try:
             with open(arquivo, "r") as f:
@@ -49,7 +49,7 @@ class UserCommands:
                         lista_associada=tarefa_dict["lista_associada"],
                         nota=tarefa_dict["nota"],
                         data=data_obj,
-                        tags=tarefa_dict["tags"],
+                        tags=set(tarefa_dict["tags"]),
                         prioridade=tarefa_dict["prioridade"],
                         repeticao=tarefa_dict["repeticao"],
                         concluida=tarefa_dict["concluida"],
@@ -151,8 +151,8 @@ class UserCommands:
             else:
                 data_obj = None
 
-            tags_str = input("Tags (espaco para separar): ")
-            tags = tags_str.split()
+            tags_str = input("Tags (vírgula para separar): ")
+            tags = set(tag.strip().lower() for tag in tags_str.split(","))
             
             while True:
                 try:
@@ -296,8 +296,8 @@ class UserCommands:
             print("- Deve-se usar um ou múltiplos dos filtros disponíveis:")
             print()
             print(trm.bold('=> TEXTO:"foo"'), '- busca por tarefas que contenham o texto no título, nota ou tags;')
-            print(trm.bold('=> LISTA_NOME: ;')) # TODO: description for LISTA_NOME
-            print(trm.bold('=> LISTA_ID: ;')) # TODO: description for LISTA_ID
+            print(trm.bold('=> LISTA_NOME:"titulo da lista"'), '- busca por tarefas pertencentes à lista com esse título.')
+            print(trm.bold('=> LISTA_ID:"id da lista"'), '- busca por tarefas pertencentes à lista com esse título.')
             print(trm.bold('=> TAGS:"bar, baz"'), '- busca por tarefas que contenham a(s) tag(s) fornecida(s);')
             print('    > Separe múltiplas tags por vírgula (",").')
             print(trm.bold('=> ATE:"prazo"'), '- busca por tarefas cujo prazo é até:')
@@ -310,29 +310,62 @@ class UserCommands:
         keywords: list[str] = texto.split('"')
         filters: list[Callable] = []
         if len(keywords) == 1:
-            print("uhh error? where my quotes at??")
+            print("Certifique-se de usar aspas ao redor de cada valor de filtro na busca.")
             return
+        
+        # Ordenação padrão é, primariamente, por data
+        sorting_key: Callable = lambda tarefa: (
+                    tarefa.data if tarefa.data else date.max,
+                    -tarefa.prioridade,
+                    tarefa.lista_associada,
+                )
+
         for i in range(0, len(keywords) - 1, 2):
             tipo: str = keywords[i].strip(" :").upper()
-            valor: str = keywords[i + 1]
+            valor: str = keywords[i + 1].lower()
 
-            # TODO: not that many things perhaps 🤔
+            # TODO: nothing 😎 (i hope), save from organizing
             match tipo:
                 case "TEXTO":
                     filters.append(
-                        lambda tarefa: valor in tarefa.titulo
-                            or valor in tarefa.nota
-                            or any((valor in tag) for tag in tarefa.tags)
-                        )
+                            lambda tarefa, valor=valor:
+                                valor in tarefa.titulo.lower()
+                                or valor in tarefa.nota.lower()
+                                or any((valor in tag.lower())
+                                        for tag in tarefa.tags)
+                            )
                 case "LISTA_NOME":
-                    pass # TODO: busca através do nome da lista associada
+                    lista_id: int
+                    for lista in listas:
+                        if lista.titulo == valor:
+                            lista_id = lista.id
+                            break
+                    else:
+                        print(f'Lista com título "{valor}" não encontrada!')
+                        print(f'Tente rodar "ver listas" para ver as listas disponíveis.')
+                        return
+                    filters.append(
+                            lambda tarefa, valor=valor:
+                                tarefa.lista_associada == lista_id
+                            )
                 case "LISTA_ID":
-                    pass # TODO: busca através do id da lista associada
+                    for lista in listas:
+                        if lista.id == valor:
+                            break
+                    else:
+                        print(f'Lista com o id "{valor}" não encontrada!')
+                        print(f'Tente rodar "ver listas" para ver as listas disponíveis.')
+                        return
+                    filters.append(
+                            lambda tarefa, valor=valor:
+                                tarefa.lista_associada == lista_id
+                            )
                 case "TAGS":
-                    # TODO: fix bug when filtering by tag and by other things at
-                    # the same time? needs more testing
-                    filters.append(lambda tarefa:
-                            all((tag.strip() in tarefa.tags) for tag in valor.split(",") if tag))
+                    filters.append(
+                            lambda tarefa, valor=valor:
+                                all((tag.strip() in tarefa.tags)
+                                for tag in valor.split(",") if tag)
+                            )
                 case "ATE":
                     target_date: date
                     match valor.upper():
@@ -348,24 +381,33 @@ class UserCommands:
                                 print('Data inválida! Use "HOJE", "7 DIAS" ou' \
                                     ' uma data no formato "DD/MM/AAAA".')
                                 return
-                    filters.append(lambda tarefa: tarefa.data <= target_date)
+                    filters.append(lambda tarefa, target_date=target_date:
+                                    tarefa.data <= target_date)
                 case "CONCLUIDA":
-                    concluida: bool = valor.lower().startswith("s")
-                    filters.append(lambda tarefa: tarefa.concluida == concluida)
+                    concluida: bool = valor.startswith("s")
+                    filters.append(lambda tarefa, concluida=concluida:
+                                    tarefa.concluida == concluida)
                 case "ORDENAR":
-                    pass # TODO: sorting (well, it's not a filter in this case,
-                         # buuut using the same syntax is the most consistent choice i think)
-                         # (and idk where else and how else we'd do it)
+                    # Ordenação padrão já é por data, então só é preciso
+                    # mudar quando o usuário quer ordenar por prioridade
+                    if valor.upper() == "PRIORIDADE":
+                        sorting_key = lambda tarefa: (
+                                    -tarefa.prioridade,
+                                    tarefa.data if tarefa.data else date.max,
+                                    tarefa.lista_associada,
+                                )
 
         resultados: list[Tarefa] = []
         for lista in listas:
             for tarefa in lista.tarefas:
                 if all(filtro(tarefa) for filtro in filters):
                     resultados.append(tarefa)
+        resultados.sort(key=sorting_key)
         
         if not resultados:
             print("Nenhuma tarefa encontrada nessa busca. :/")
             return
+        print(">>>>>> RESULTADOS DA BUSCA:")
         for tarefa in resultados:
             print(tarefa)
                 
@@ -422,7 +464,7 @@ class UserCommands:
             else:
                 data_obj = None
 
-            tags_str = input(f"Novas tags separadas por espaço [{tarefa.tags}]: ")
+            tags_str = input(f"Novas tags separadas por vírgula (substituirão as antigas) [{tarefa.tags}]: ")
             
             while True:
                 prioridade = input(f"Nova prioridade [{tarefa.prioridade}] (Sem prioridade = 0 | Baixa = 1 | Média = 2 | Alta = 3): ")
@@ -455,7 +497,7 @@ class UserCommands:
             if data_obj:
                 tarefa.data = data_obj
             if tags_str:
-                tarefa.tags = tags_str.split()
+                tarefa.tags = set(tag.strip().lower() for tag in tags_str.split(","))
             if prioridade:
                 tarefa.prioridade = prioridade
             if repeticao:    
