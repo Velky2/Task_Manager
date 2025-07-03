@@ -4,7 +4,8 @@ from datetime import date, timedelta
 from typing import Callable
 from classes.tarefa import Tarefa
 from classes.lista import ListaDeTarefas
-from terminal_utils import clear_screen, bold
+import terminal_utils as trm
+from terminal_utils import clear_screen
 
 listas: list[ListaDeTarefas] = []
 
@@ -57,13 +58,13 @@ class UserCommands:
                 
                 listas.append(nova_lista)
             print()
-            print(bold("Dados carregados"))
+            print(trm.bold("Dados carregados"))
 
         except FileNotFoundError:
-            print(bold("Começando com um arquivo vazio"))
+            print(trm.bold("Começando com um arquivo vazio"))
             listas = [ListaDeTarefas("Cuba")]
         except json.JSONDecodeError:
-            print(bold("Começando com um arquivo vazio"))
+            print(trm.bold("Começando com um arquivo vazio"))
             listas = [ListaDeTarefas("Cuba")]
 
     @staticmethod
@@ -73,21 +74,21 @@ class UserCommands:
     @staticmethod
     def ajuda() -> None:
         print()
-        print(bold("Escreva algum dos comandos no terminal para realizar a ação:"))
+        print(trm.bold("Escreva algum dos comandos no terminal para realizar a ação:"))
         print()
-        print(bold("=> Adicionar tarefa:"), "cria uma tarefa e a adiciona a uma lista existente")
-        print(bold("=> Adicionar lista:"), "cria uma lista")
-        print(bold("=> Remover tarefa:"), "remove uma tarefa")
-        print(bold("=> Remover lista:"), "remove uma lista e as tarefas que nela residem")
-        print(bold("=> Editar tarefa:"), "edita os valores de uma tarefa, à mercê do usuário")
-        print(bold("=> Editar lista:"), "edita o título de uma lista")
-        print(bold("=> Ver lista:"), "mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
-        print(bold("=> Ver listas:"), "mostra o título e o ID de todas as listas existentes")
-        print(bold("=> Ver tudo:"), "mostra todas as listas, as tarefas dentro delas e as propriedades das tarefas")
-        print(bold("=> Buscar tarefas:"), "mostra a lista de comandos disponíveis para encontrar tarefas com certas características")
-        print(bold("=> Concluir tarefa:"), "conclui uma tarefa")
-        print(bold("=> Salvar dados:"), "salva as alterações feitas nas listas e tarefas")
-        print(bold("=> Carregar dados:"), "carrega dados salvos anteriormente. É ativado juntamente com a inicialização do programa")
+        print(trm.bold("=> Adicionar tarefa:"), "cria uma tarefa e a adiciona a uma lista existente")
+        print(trm.bold("=> Adicionar lista:"), "cria uma lista")
+        print(trm.bold("=> Remover tarefa:"), "remove uma tarefa")
+        print(trm.bold("=> Remover lista:"), "remove uma lista e as tarefas que nela residem")
+        print(trm.bold("=> Editar tarefa:"), "edita os valores de uma tarefa, à mercê do usuário")
+        print(trm.bold("=> Editar lista:"), "edita o título de uma lista")
+        print(trm.bold("=> Ver lista:"), "mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
+        print(trm.bold("=> Ver listas:"), "mostra o título e o ID de todas as listas existentes")
+        print(trm.bold("=> Ver tudo:"), "mostra todas as listas, as tarefas dentro delas e as propriedades das tarefas")
+        print(trm.bold("=> Buscar tarefas:"), "mostra a lista de comandos disponíveis para encontrar tarefas com certas características")
+        print(trm.bold("=> Concluir tarefa:"), "conclui uma tarefa")
+        print(trm.bold("=> Salvar dados:"), "salva as alterações feitas nas listas e tarefas")
+        print(trm.bold("=> Carregar dados:"), "carrega dados salvos anteriormente. É ativado juntamente com a inicialização do programa")
 
     @staticmethod
     def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[None, None]:
@@ -195,7 +196,7 @@ class UserCommands:
         clear_screen()
         while True:
             p = True
-            novo_titulo = input(bold(("Digite o título: ")))
+            novo_titulo = input(trm.bold(("Digite o título: ")))
             if novo_titulo == "":
                 print("Digite um título não vazio")
                 continue
@@ -213,7 +214,7 @@ class UserCommands:
     @staticmethod
     def remover_tarefa() -> None:
         clear_screen()
-        print(bold("Escolha a tarefa que deseja remover:"))
+        print(trm.bold("Escolha a tarefa que deseja remover:"))
         for l in listas:
             for t in l.tarefas:
                 print(f"Título: {t.titulo} | ID: {t.id}")
@@ -231,7 +232,7 @@ class UserCommands:
     @staticmethod
     def remover_lista() -> None:
         clear_screen()
-        print(bold("Escolha a lista que deseja remover:"))
+        print(trm.bold("Escolha a lista que deseja remover:"))
         for l in listas:
             print(f"Título: {l.titulo} | ID: {l.id}")
         
@@ -281,22 +282,22 @@ class UserCommands:
         texto: str = " ".join(args)
         if not texto:
             print()
-            print(bold("Uso:"), bold('Buscar tarefas FILTRO1:"filtro" FILTRO2:"outro filtro"'))
+            print(trm.bold("Uso:"), trm.bold('Buscar tarefas FILTRO1:"filtro" FILTRO2:"outro filtro"'))
             print()
             print("- Deve-se incluir aspas ao redor de cada valor de filtro na busca.")
             print("- Deve-se usar um ou múltiplos dos filtros disponíveis:")
             print()
-            print(bold('=> TEXTO:"foo"'), '- busca por tarefas que contenham o texto no título, nota ou tags;')
-            print(bold('=> LISTA_NOME: ;')) # TODO: description for LISTA_NOME
-            print(bold('=> LISTA_ID: ;')) # TODO: description for LISTA_ID
-            print(bold('=> TAGS:"bar, baz"'), '- busca por tarefas que contenham a(s) tag(s) fornecida(s);')
+            print(trm.bold('=> TEXTO:"foo"'), '- busca por tarefas que contenham o texto no título, nota ou tags;')
+            print(trm.bold('=> LISTA_NOME: ;')) # TODO: description for LISTA_NOME
+            print(trm.bold('=> LISTA_ID: ;')) # TODO: description for LISTA_ID
+            print(trm.bold('=> TAGS:"bar, baz"'), '- busca por tarefas que contenham a(s) tag(s) fornecida(s);')
             print('    > Separe múltiplas tags por vírgula (",").')
-            print(bold('=> ATE:"prazo"'), '- busca por tarefas cujo prazo é até:')
+            print(trm.bold('=> ATE:"prazo"'), '- busca por tarefas cujo prazo é até:')
             print('    > "HOJE", ou que já estão atrasadas')
             print('    > "7 DIAS", prazo contido nos próximos 7 dias ou já atrasadas')
             print('    > "DD/MM/AAAA", até a data específica dada (inclui atrasadas)')
-            print(bold('=> CONCLUIDA:"s"'), '- busca por tarefas concluídas ("s", "sim") ou pendentes ("n", "nao");')
-            print(bold('=> ORDENAR:"criterio"'), '- ordena os resultados pelo critério "DATA" ou "PRIORIDADE".')
+            print(trm.bold('=> CONCLUIDA:"s"'), '- busca por tarefas concluídas ("s", "sim") ou pendentes ("n", "nao");')
+            print(trm.bold('=> ORDENAR:"criterio"'), '- ordena os resultados pelo critério "DATA" ou "PRIORIDADE".')
             return
         keywords: list[str] = texto.split('"')
         filters: list[Callable] = []
@@ -364,7 +365,7 @@ class UserCommands:
     def editar_tarefa() -> None:
         clear_screen()
 
-        print(bold("Selecione a tarefa que deseja editar:"))
+        print(trm.bold("Selecione a tarefa que deseja editar:"))
         for l in listas:
             for t in l.tarefas:
                 print(f"Título: {t.titulo} | ID: {t.id}")
@@ -375,7 +376,7 @@ class UserCommands:
         
         if tarefa:
             print()
-            print(bold("O valor anterior do atributo será apresentado dentro de colchetes"))
+            print(trm.bold("O valor anterior do atributo será apresentado dentro de colchetes"))
             print("Pressione Enter para não alterar o valor")
             print()
             titulo = input(f"Novo título [{tarefa.titulo}]: ")
@@ -446,7 +447,7 @@ class UserCommands:
     def editar_lista() -> None:
         clear_screen()
 
-        print(bold("Selecione a lista que deseja editar:"))
+        print(trm.bold("Selecione a lista que deseja editar:"))
         for l in listas:
             print(f"Título: {l.titulo} | ID: {l.id}")
 
@@ -479,7 +480,7 @@ class UserCommands:
     @staticmethod
     def concluir_tarefa() -> None:
         clear_screen()
-        print(bold("Selecione a tarefa que foi concluída:"))
+        print(trm.bold("Selecione a tarefa que foi concluída:"))
 
         for l in listas:
             for t in l.tarefas:
@@ -525,7 +526,7 @@ def main() -> None:
     UserCommands.carregar_dados()
     UserCommands.ajuda()
     while True:
-        user_input: str = input(bold("manager") + "> ")
+        user_input: str = input(trm.bold("manager") + "> ")
         words: list[str] = user_input.lower().split()
         if not words:
             continue
@@ -539,7 +540,7 @@ def main() -> None:
             method: Callable = getattr(UserCommands, command)
             method(*args)
         else:
-            print(f'Comando "{bold(user_input.lower())}" não encontrado.')
+            print(f'Comando "{trm.bold(user_input.lower())}" não encontrado.')
             print('Digite "ajuda" para ver os comandos disponíveis.')
         print()
 
