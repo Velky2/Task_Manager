@@ -87,7 +87,7 @@ class UserCommands:
         print(bold("=> Buscar tarefas:"), "mostra a lista de comandos disponíveis para encontrar tarefas com certas características")
         print(bold("=> Concluir tarefa:"), "conclui uma tarefa")
         print(bold("=> Salvar dados:"), "salva as alterações feitas nas listas e tarefas")
-        print(bold("=> Carregar dados:"), "carrega dados salvos anteriormente. É ativado juntamente com a inicialização do programa")
+        print(bold("=> Carregar dados:"), "carrega dados salvos anteriormente. É ativado juntamente com a inicialização do terminal")
 
     @staticmethod
     def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[None, None]:
@@ -113,7 +113,7 @@ class UserCommands:
                     print("ID inválido!")
                 else:
                     return n
-
+    
     @staticmethod
     def adicionar_tarefa() -> None:
         clear_screen()
@@ -223,7 +223,7 @@ class UserCommands:
         tarefa, lista = UserCommands.encontrar_tarefa_pelo_id(tarefa_id)
 
         if tarefa and lista:
-            lista.remover_tarefa(tarefa)
+            lista.remover_tarefa(tarefa.id)
             print("Feito :D")
         else:
             print("Tarefa não encontrada")
@@ -231,6 +231,11 @@ class UserCommands:
     @staticmethod
     def remover_lista() -> None:
         clear_screen()
+        if len(listas) <= 1:
+            print()
+            print("Somente há uma lista salva, você não pode exclui-la")
+            return
+        
         print(bold("Escolha a lista que deseja remover:"))
         for l in listas:
             print(f"Título: {l.titulo} | ID: {l.id}")
@@ -240,8 +245,12 @@ class UserCommands:
         lista = UserCommands.encontrar_lista_pelo_id(lista_id)
 
         if lista:
-            listas.remove(lista)
-            print("Feito :D")
+            confirmacao = input("Apagar a lista também excluirá todas as tarefas contidas nela. Você quer continuar com a ação? (S/N): ")
+            if confirmacao == "S":
+                listas.remove(lista)
+                print("Feito :D")
+            else:
+                print("Ação cancelada")
         else:
             print("Lista não encontrada")
     
