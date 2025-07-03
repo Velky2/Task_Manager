@@ -14,6 +14,7 @@ arquivo = "tarefas.json"
 class UserCommands:
     @staticmethod
     def salvar_dados():
+        clear_screen()
         dados = {}
         for l in listas:
             tarefas_l = []
@@ -144,6 +145,7 @@ class UserCommands:
                         data_obj = date(ano, mes, dia)
                     except (ValueError, TypeError):
                         print("Formato de data inválido! Use DD/MM/AAAA")
+                        data_str = input("Data (DD/MM/AAAA): ")
                     else:
                         break
             else:
@@ -281,9 +283,6 @@ class UserCommands:
         clear_screen()
         for lista in listas:
             print(lista)
-            for t in lista.tarefas:
-                print(t.titulo, " | ")
-            print()
     
     @staticmethod
     def buscar_tarefas(*args) -> None:
@@ -408,7 +407,21 @@ class UserCommands:
                     print("O ID colocado não existe, tente novamente")
 
             nota = input(f"Nova nota [{tarefa.nota}]: ")
-            data = input(f"Nova data [{tarefa.data}]: ")
+            data_str = input(f"Nova data [{tarefa.data}]: ")
+
+            if data_str:
+                while True:
+                    try:
+                        dia, mes, ano = map(int, data_str.split('/'))
+                        data_obj = date(ano, mes, dia)
+                    except (ValueError, TypeError):
+                        print("Formato de data inválido! Use DD/MM/AAAA")
+                        data_str = input("Data (DD/MM/AAAA): ")
+                    else:
+                        break
+            else:
+                data_obj = None
+
             tags_str = input(f"Novas tags separadas por espaço [{tarefa.tags}]: ")
             
             while True:
@@ -439,8 +452,8 @@ class UserCommands:
                 tarefa.lista_associada = lista_associada
             if nota:    
                 tarefa.nota = nota
-            if data:
-                tarefa.data = data
+            if data_obj:
+                tarefa.data = data_obj
             if tags_str:
                 tarefa.tags = tags_str.split()
             if prioridade:
