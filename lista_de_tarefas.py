@@ -88,8 +88,6 @@ class UserCommands:
         print(trm.bold("=> Ver tudo:"), "mostra todas as listas, as tarefas dentro delas e as propriedades das tarefas")
         print(trm.bold("=> Buscar tarefas:"), "mostra a lista de comandos disponíveis para encontrar tarefas com certas características")
         print(trm.bold("=> Concluir tarefa:"), "conclui uma tarefa")
-        print(trm.bold("=> Salvar dados:"), "salva as alterações feitas nas listas e tarefas")
-        print(trm.bold("=> Carregar dados:"), "carrega dados salvos anteriormente. É ativado juntamente com a inicialização do programa")
 
     @staticmethod
     def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[None, None]:
@@ -237,6 +235,7 @@ class UserCommands:
             )
             lista.adicionar_tarefa(nova_tarefa)
             print("Feito :D")
+            UserCommands.salvar_dados()
         else:
             print("Lista não encontrada")
     
@@ -256,7 +255,7 @@ class UserCommands:
                 nova_lista = ListaDeTarefas(titulo=novo_titulo)
                 listas.append(nova_lista)
                 print("Feito :D")
-                break
+                UserCommands.salvar_dados()
             else:
                 print("Já existe uma lista com esse título, tente novamente")
 
@@ -275,6 +274,7 @@ class UserCommands:
         if tarefa and lista:
             lista.remover_tarefa(tarefa.id)
             print("Feito :D")
+            UserCommands.salvar_dados()
         else:
             print("Tarefa não encontrada")
 
@@ -299,6 +299,7 @@ class UserCommands:
             if confirmacao == "S":
                 listas.remove(lista)
                 print("Feito :D")
+                UserCommands.salvar_dados()
             else:
                 print("Ação cancelada")
         else:
@@ -330,11 +331,12 @@ class UserCommands:
     def ver_tudo() -> None:
         clear_screen()
         for lista in listas:
+            print()
+            print(f"===== Lista: {lista.titulo} =====")
+            print()
             for t in lista.tarefas:
-                print()
-                print(f"===== Lista: {lista.titulo} =====")
-                print()
                 UserCommands.imprimir_tarefa(t)
+                print()
     
     @staticmethod
     def buscar_tarefas(*args) -> None:
@@ -555,6 +557,7 @@ class UserCommands:
             if repeticao:    
                 tarefa.repeticao = repeticao
             print("Feito :D")
+            UserCommands.salvar_dados()
         else:
             print("Tarefa não encontrada")
 
@@ -562,7 +565,6 @@ class UserCommands:
     @staticmethod
     def editar_lista() -> None:
         clear_screen()
-
         print(trm.bold("Selecione a lista que deseja editar:"))
         for l in listas:
             print(f"Título: {l.titulo} | ID: {l.id}")
@@ -590,6 +592,7 @@ class UserCommands:
 
             lista.titulo = titulo
             print("Feito :D")
+            UserCommands.salvar_dados()
         else:
             print("Lista não encontrada")
     
@@ -634,6 +637,7 @@ class UserCommands:
                     nova_tarefa.data = tarefa.data.replace(year=tarefa.data.year + 1)
                 lista.adicionar_tarefa(nova_tarefa)
                 print(f"Tarefa concluída! Nova tarefa criada para {nova_tarefa.data.strftime('%d/%m/%Y')}")
+                UserCommands.salvar_dados()
         else:
             print("Tarefa concluída com sucesso!")
 
