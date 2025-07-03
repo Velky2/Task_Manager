@@ -6,12 +6,66 @@ from classes.tarefa import Tarefa
 from classes.lista import ListaDeTarefas
 from terminal_utils import clear_screen, bold
 
-# arquivo_tarefa = "classes.tarefa.json"
-# arquivo_lista = "classes.lista.json"
+listas: list[ListaDeTarefas] = []
 
-listas: list[ListaDeTarefas] = [ListaDeTarefas("Cuba")]
+arquivo = "tarefas.json"
 
 class UserCommands:
+    @staticmethod
+    def salvar_dados():
+        dados = {}
+        for l in listas:
+            tarefas_l = []
+            for t in l.tarefas:
+                tarefas_l.append(t.para_dicio())
+            dados[l.titulo] = tarefas_l
+        
+        with open(arquivo, "w") as f:
+            json.dump(dados, f, indent=4)
+        print("Feito :D")
+
+    @staticmethod
+    def carregar_dados():
+        global listas
+        try:
+            with open(arquivo, "r") as f:
+                dados_carregados = json.load(f)
+            
+            listas = []
+
+            for titulo_lista, dados_tarefas in dados_carregados.items():
+                nova_lista = ListaDeTarefas(titulo_lista)
+                for tarefa_dict in dados_tarefas:
+                    data_str = tarefa_dict.get("data")
+                    data_obj = None
+                    if data_str:
+                        day, month, year = map(int, data_str.split("/"))
+                        data_obj = date(year, month, day)
+                    
+                    nova_tarefa = Tarefa(
+                        titulo=tarefa_dict["titulo"],
+                        lista_associada=tarefa_dict["lista_associada"],
+                        nota=tarefa_dict["nota"],
+                        data=data_obj,
+                        tags=tarefa_dict["tags"],
+                        prioridade=tarefa_dict["prioridade"],
+                        repeticao=tarefa_dict["repeticao"],
+                        concluida=tarefa_dict["concluida"],
+                    )
+
+                    nova_lista.adicionar_tarefa(nova_tarefa)
+                
+                listas.append(nova_lista)
+            print()
+            print(bold("Dados carregados"))
+
+        except FileNotFoundError:
+            print(bold("Começando com um arquivo vazio"))
+            listas = [ListaDeTarefas("Cuba")]
+        except json.JSONDecodeError:
+            print(bold("Começando com um arquivo vazio"))
+            listas = [ListaDeTarefas("Cuba")]
+
     @staticmethod
     def limpar_tela() -> None:
         clear_screen()
@@ -31,7 +85,9 @@ class UserCommands:
         print(bold("=> Ver listas:"), "mostra o título e o ID de todas as listas existentes")
         print(bold("=> Ver tudo:"), "mostra todas as listas, as tarefas dentro delas e as propriedades das tarefas")
         print(bold("=> Buscar tarefas:"), "mostra a lista de comandos disponíveis para encontrar tarefas com certas características")
-        print(bold("=> Concluir tarefa:"), "Conclui uma tarefa")
+        print(bold("=> Concluir tarefa:"), "conclui uma tarefa")
+        print(bold("=> Salvar dados:"), "salva as alterações feitas nas listas e tarefas")
+        print(bold("=> Carregar dados:"), "carrega dados salvos anteriormente. É ativado juntamente com a inicialização do programa")
 
     @staticmethod
     def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[None, None]:
@@ -466,6 +522,7 @@ class UserCommands:
 
 
 def main() -> None:
+    UserCommands.carregar_dados()
     UserCommands.ajuda()
     while True:
         user_input: str = input(bold("manager") + "> ")

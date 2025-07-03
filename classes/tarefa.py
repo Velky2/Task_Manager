@@ -34,7 +34,19 @@ class Tarefa:
             lines.append(f"- {name}: {getattr(self, attr)}")
         
         return "\n".join(lines)
-
+    
+    def para_dicio(self):
+        return{
+            "titulo": self.titulo,
+            "nota": self.nota,
+            "data": self.data,
+            "tags": self.tags,
+            "lista_associada": self.lista_associada,
+            "prioridade": self.prioridade,
+            "repeticao": self.repeticao,
+            "concluida": self.concluida,
+            "id": self.id
+        }
 
 if __name__ == "__main__":
     print(Tarefa.id_count)
