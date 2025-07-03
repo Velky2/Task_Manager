@@ -1,0 +1,83 @@
+{
+    "MC 102": [
+        {
+            "titulo": "Projeto 3",
+            "nota": "",
+            "data": "04/07/2025",
+            "tags": [
+                "CC",
+                "projeto",
+                "mc-102"
+            ],
+            "lista_associada": "0",
+            "prioridade": "3",
+            "repeticao": "0",
+            "concluida": false,
+            "id": 5
+        }
+    ],
+    "Tarefas casa": [
+        {
+            "titulo": "Limpar banheiro",
+            "nota": "",
+            "data": "10/07/2025",
+            "tags": [
+                "casa",
+                "limpeza"
+            ],
+            "lista_associada": 1,
+            "prioridade": 1,
+            "repeticao": 2,
+            "concluida": true,
+            "id": 6
+        },
+        {
+            "titulo": "lavar roupas",
+            "nota": "",
+            "data": "12/07/2025",
+            "tags": [
+                "roupa",
+                "limpeza"
+            ],
+            "lista_associada": 1,
+            "prioridade": 1,
+            "repeticao": 2,
+            "concluida": false,
+            "id": 7
+        }
+    ],
+    "Hobbies": [
+        {
+            "titulo": "Andar de bicicleta",
+            "nota": "",
+            "data": "08/07/2025",
+            "tags": [
+                "cardio",
+                "exercicio",
+                "bicicleta"
+            ],
+            "lista_associada": 2,
+            "prioridade": 1,
+            "repeticao": 2,
+            "concluida": false,
+            "id": 8
+        }
+    ],
+    "Social": [
+        {
+            "titulo": "Ligar para m\u00e3e",
+            "nota": "",
+            "data": null,
+            "tags": [
+                "social",
+                "fam\u00edlia",
+                "m\u00e3e"
+            ],
+            "lista_associada": 4,
+            "prioridade": 2,
+            "repeticao": 0,
+            "concluida": false,
+            "id": 9
+        }
+    ]
+}
