@@ -10,6 +10,7 @@ class UserCommands:
         print()
         print(trm.bold("Digite algum dos comandos no terminal para realizar a ação:"))
         print()
+        print(trm.bold("=> Ajuda:"), "mostra essa lista de comandos.")
         print(trm.bold("=> Adicionar tarefa:"), "cria uma tarefa e a adiciona a uma lista existente")
         print(trm.bold("=> Adicionar lista:"), "cria uma lista")
         print(trm.bold("=> Remover tarefa:"), "remove uma tarefa")
@@ -27,60 +28,60 @@ class UserCommands:
         clear_screen()
     
     @staticmethod
-    def adicionar_tarefa():
+    def adicionar_tarefa() -> None:
         clear_screen()
         adicionar_tarefa()
 
     @staticmethod
-    def adicionar_lista():
+    def adicionar_lista() -> None:
         clear_screen()
         adicionar_lista()
 
     @staticmethod
-    def remover_tarefa():
+    def remover_tarefa() -> None:
         clear_screen()
         remover_tarefa()
 
     @staticmethod
-    def remover_lista():
+    def remover_lista() -> None:
         clear_screen()
         remover_lista()
     
     @staticmethod
-    def editar_tarefa():
+    def editar_tarefa() -> None:
         clear_screen()
         editar_tarefa()
     
     @staticmethod
-    def editar_lista():
+    def editar_lista() -> None:
         clear_screen()
         editar_lista()
     
     @staticmethod
-    def concluit_tarefa():
+    def concluir_tarefa() -> None:
         clear_screen()
         concluir_tarefa()
     
     @staticmethod
-    def ver_lista():
+    def ver_lista(*titulo) -> None:
         clear_screen()
-        ver_lista()
+        ver_lista(*titulo)
     
     @staticmethod
-    def ver_listas():
+    def ver_listas() -> None:
         clear_screen()
         ver_listas()
     
     @staticmethod
-    def ver_tudo():
+    def ver_tudo() -> None:
         clear_screen()
         ver_tudo()
-                
-
+    
     @staticmethod
-    def buscar_tarefas():
+    def buscar_tarefas(*args) -> None:
         clear_screen()
-        buscar_tarefas()
+        buscar_tarefas(*args)
+
 
 def main() -> None:
     UserCommands.ajuda()
