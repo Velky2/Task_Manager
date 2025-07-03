@@ -1,8 +1,6 @@
 from typing import Callable
-
 from comandos.edicao import adicionar_tarefa, adicionar_lista, remover_tarefa, remover_lista, editar_tarefa, editar_lista, concluir_tarefa
 from comandos.visualizacao import ver_lista, ver_listas, ver_tudo, buscar_tarefas
-from comandos.manipulacao_de_dados import carregar_dados
 import terminal_utils as trm
 from terminal_utils import clear_screen
 

@@ -1,8 +1,8 @@
+from datetime import date, timedelta
 from classes.tarefa import Tarefa
 from classes.lista import ListaDeTarefas
 from comandos.manipulacao_de_dados import salvar_mudanças, salvar_dados, listas
 import terminal_utils as trm
-from datetime import date, timedelta
 
 def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[None, None]:
     for l in listas:

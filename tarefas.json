@@ -5,15 +5,15 @@
             "nota": "",
             "data": "04/07/2025",
             "tags": [
-                "CC",
                 "projeto",
+                "CC",
                 "mc-102"
             ],
             "lista_associada": "0",
             "prioridade": "3",
             "repeticao": "0",
             "concluida": false,
-            "id": 5
+            "id": 0
         }
     ],
     "Tarefas casa": [
@@ -22,14 +22,14 @@
             "nota": "",
             "data": "10/07/2025",
             "tags": [
-                "casa",
-                "limpeza"
+                "limpeza",
+                "casa"
             ],
             "lista_associada": 1,
             "prioridade": 1,
             "repeticao": 2,
             "concluida": true,
-            "id": 6
+            "id": 1
         },
         {
             "titulo": "lavar roupas",
@@ -43,14 +43,14 @@
             "prioridade": 1,
             "repeticao": 2,
             "concluida": false,
-            "id": 7
+            "id": 2
         }
     ],
     "Hobbies": [
         {
             "titulo": "Andar de bicicleta",
             "nota": "",
-            "data": "08/07/2025",
+            "data": "07/07/2025",
             "tags": [
                 "cardio",
                 "exercicio",
@@ -60,7 +60,7 @@
             "prioridade": 1,
             "repeticao": 2,
             "concluida": false,
-            "id": 8
+            "id": 3
         }
     ],
     "Social": [
@@ -69,15 +69,15 @@
             "nota": "",
             "data": null,
             "tags": [
+                "m\u00e3e",
                 "social",
-                "fam\u00edlia",
-                "m\u00e3e"
+                "fam\u00edlia"
             ],
             "lista_associada": 4,
             "prioridade": 2,
             "repeticao": 0,
             "concluida": false,
-            "id": 9
+            "id": 4
         }
     ]
 }

@@ -1,9 +1,9 @@
+from typing import Callable
+from datetime import date, timedelta
 from classes.tarefa import Tarefa
 from comandos.manipulacao_de_dados import listas
 from comandos.edicao import imprimir_tarefa
 import terminal_utils as trm
-from typing import Callable
-from datetime import date, timedelta
 
 def ver_lista(*titulo) -> None:
         titulo: str = "".join(titulo).strip('"').lower()

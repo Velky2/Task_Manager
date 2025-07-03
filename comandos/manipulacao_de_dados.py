@@ -1,8 +1,8 @@
+from datetime import date
+import json
 from classes.lista import ListaDeTarefas
 from classes.tarefa import Tarefa
-import json
 import terminal_utils as trm
-from datetime import date
 
 listas: list[ListaDeTarefas] = []
 arquivo: str = "tarefas.json"
