@@ -58,6 +58,7 @@ class UserCommands:
         clear_screen()
         editar_lista()
     
+    @staticmethod
     def concluit_tarefa():
         clear_screen()
         concluir_tarefa()
@@ -84,7 +85,6 @@ class UserCommands:
         buscar_tarefas()
 
 def main() -> None:
-    carregar_dados()
     UserCommands.ajuda()
     while True:
         user_input: str = input(trm.bold("manager") + "> ")
