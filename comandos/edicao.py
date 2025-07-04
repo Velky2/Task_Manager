@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from classes.tarefa import Tarefa
+from classes.tarefa import Tarefa, Prioridade, Repeticao
 from classes.lista import ListaDeTarefas
 from comandos.manipulacao_de_dados import salvar_mudanças, salvar_dados, listas
 import terminal_utils as trm
@@ -26,58 +26,11 @@ def confirmar_id_int():
             else:
                 return n
 
-def imprimir_tarefa(tarefa):
-    titulo = tarefa.titulo
-    lista_associada = tarefa.lista_associada
-    nota = tarefa.nota
-    data = tarefa.data
-    tags = tarefa.tags
-    prioridade = tarefa.prioridade
-    repetição = tarefa.repeticao
-    concluida = tarefa.concluida
-    id = tarefa.id
-
-    print(f"Tarefa: {titulo} | ID: {id}")
-    print(f"Lista associada: {lista_associada}")
-    print(f"Nota: {nota}")
-    if data:
-        ano, mes, dia = map(int, str(data).split("-"))
-        print(f"Data: {dia}/{mes}/{ano}")
-    else:
-        print("Data: ")
-
-    print(f"Tags: {tags}")
-
-    if prioridade == 0:
-        print(f"Prioridade: nenhuma")
-    elif prioridade == 1:
-        print(f"Prioridade: baixa")
-    elif prioridade == 2:
-        print(f"Prioridade: média")
-    else:
-        print(f"Prioridade: alta")
-    
-    if repetição == 0:
-        print(f"Sem repetição")
-    elif repetição == 1:
-        print(f"Repetição: diária")
-    elif repetição == 2:
-        print("Repetição: semanal")
-    elif repetição == 3:
-        print("Repetição: mensal")
-    else:
-        print("Repetição anual")
-    
-    if concluida:
-        print("Concluida: sim")
-    else:
-        print("Concluida: não")
-
 def adicionar_tarefa() -> None:
     while True:
         titulo = input("Escolha um título: ")
         if titulo == "":
-            print("O tĩtulo não pode ser vazio, tente novamente")
+            print("O título não pode ser vazio, tente novamente")
         else:
             break
 
@@ -355,29 +308,42 @@ def concluir_tarefa() -> None:
             print("Tarefa ou lista não encontrada!")
             return
         tarefa.concluida = True
-        if tarefa.repeticao != 0:
-            nova_tarefa = Tarefa(
-                titulo=tarefa.titulo,
-                lista_associada=tarefa.lista_associada,
-                nota=tarefa.nota,
-                data=tarefa.data,
-                tags=tarefa.tags.copy(),
-                prioridade=tarefa.prioridade,
-                repeticao=tarefa.repeticao,
-                concluida=False
-            )
 
-            if tarefa.data:
-                if tarefa.repeticao == 1:  # Diária
-                    nova_tarefa.data = tarefa.data + timedelta(days=1)
-                elif tarefa.repeticao == 2:  # Semanal
-                    nova_tarefa.data = tarefa.data + timedelta(weeks=1)
-                elif tarefa.repeticao == 3:  # Mensal
-                    nova_tarefa.data = tarefa.data + timedelta(days=30)
-                elif tarefa.repeticao == 4:  # Anual
-                    nova_tarefa.data = tarefa.data.replace(year=tarefa.data.year + 1)
-                lista.adicionar_tarefa(nova_tarefa)
-                print(f"Tarefa concluída! Nova tarefa criada para {nova_tarefa.data.strftime('%d/%m/%Y')}")
-                salvar_mudanças()
-        else:
+        if tarefa.repeticao == Repeticao.NENHUMA:
             print("Tarefa concluída com sucesso!")
+            return
+        
+        nova_tarefa = Tarefa(
+            titulo=tarefa.titulo,
+            lista_associada=tarefa.lista_associada,
+            nota=tarefa.nota,
+            data=tarefa.data,
+            tags=tarefa.tags.copy(),
+            prioridade=tarefa.prioridade,
+            repeticao=tarefa.repeticao,
+            concluida=False
+        )
+
+        if tarefa.data:
+            match tarefa.repeticao:
+                case Repeticao.DIARIA.value:
+                    nova_tarefa.data = tarefa.data + timedelta(days=1)
+                
+                case Repeticao.SEMANAL.value:
+                    nova_tarefa.data = tarefa.data + timedelta(weeks=1)
+                
+                case Repeticao.MENSAL.value:
+                    nova_tarefa.data = tarefa.data + timedelta(days=30)
+                
+                case Repeticao.ANUAL.value:
+                    try:
+                        nova_tarefa.data = tarefa.data.replace(
+                                year=tarefa.data.year + 1)
+                    except ValueError:
+                        # happens if the date is february 29th
+                        nova_tarefa.data = tarefa.data.replace(
+                                year=tarefa.data.year + 1) + timedelta(days=-1)
+
+            lista.adicionar_tarefa(nova_tarefa)
+            print(f"Tarefa concluída! Nova tarefa criada para {nova_tarefa.data.strftime('%d/%m/%Y')}")
+            salvar_mudanças()

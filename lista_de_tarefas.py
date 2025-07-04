@@ -10,7 +10,7 @@ class UserCommands:
         print()
         print(trm.bold("Digite algum dos comandos no terminal para realizar a ação:"))
         print()
-        print(trm.bold("=> Ajuda:"), "mostra essa lista de comandos.")
+        print(trm.bold("=> Ajuda:"), "mostra essa lista de comandos")
         print(trm.bold("=> Adicionar tarefa:"), "cria uma tarefa e a adiciona a uma lista existente")
         print(trm.bold("=> Adicionar lista:"), "cria uma lista")
         print(trm.bold("=> Remover tarefa:"), "remove uma tarefa")
