@@ -187,8 +187,9 @@ def editar_tarefa() -> None:
         titulo = input(f"Novo título [{tarefa.titulo}]: ")
         
         while True:
+            print("Listas disponíveis:")
             for l in listas:
-                print(f"Título: {l.titulo} | ID: {l.id}")
+                print(f"    Título: {l.titulo} | ID: {l.id}")
             lista_associada = input(f"Novo id da lista associada [{tarefa.lista_associada}]: ")
             
             if lista_associada == "":
@@ -205,11 +206,9 @@ def editar_tarefa() -> None:
 
         nota = input(f"Nova nota [{tarefa.nota}]: ")
         
+        data_obj1 = None
         if tarefa.data:
-            ano, mes, dia = str(tarefa.data).split('-')
-            data_obj1 = dia + "/" + mes + "/" + ano
-        else:
-            data_obj1 = None
+            data_obj1 = tarefa.data.strftime("%d/%m/%Y")
         
         data_str = input(f"Nova data [{data_obj1}]: ")
         
@@ -226,7 +225,8 @@ def editar_tarefa() -> None:
         else:
             data_obj2 = None
 
-        tags_str = input(f"Novas tags separadas por vírgula (substituirão as antigas) [{tarefa.tags}]: ")
+        print(f"Novas tags separadas por vírgula [{tarefa.tags}]")
+        tags_str = input(f"  (substituirão as antigas): ")
         
         while True:
             prioridade = input(f"Nova prioridade [{tarefa.prioridade}] (Sem prioridade = 0 | Baixa = 1 | Média = 2 | Alta = 3): ")
@@ -318,7 +318,7 @@ def concluir_tarefa() -> None:
         return
     tarefa.concluida = True
 
-    if tarefa.repeticao == Repeticao.NENHUMA:
+    if tarefa.repeticao == Repeticao.NENHUMA.value:
         print("Tarefa concluída com sucesso!")
         return
     

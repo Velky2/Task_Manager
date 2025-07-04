@@ -1,9 +1,8 @@
 from typing import Callable
-from comandos.edicao import adicionar_tarefa, adicionar_lista, remover_tarefa, remover_lista, editar_tarefa, editar_lista, concluir_tarefa
-from comandos.visualizacao import ver_lista, ver_listas, ver_tudo
-from comandos.busca import buscar_tarefas
+import comandos.busca
+import comandos.edicao
+import comandos.visualizacao
 import terminal_utils as trm
-from terminal_utils import clear_screen
 
 class UserCommands:
     @staticmethod
@@ -23,65 +22,57 @@ class UserCommands:
         print(trm.bold("=> Ver listas:"), "mostra o título e o ID de todas as listas existentes")
         print(trm.bold("=> Ver tudo:"), "mostra todas as listas, as tarefas dentro delas e as propriedades das tarefas")
         print(trm.bold("=> Buscar tarefas:"), "mostra a lista de comandos disponíveis para encontrar tarefas com certas características")
-
-    @staticmethod
-    def limpar_tela() -> None:
-        clear_screen()
+        print(trm.bold("=> Limpar tela:"), "limpa a tela do terminal")
+        print(trm.bold("=> Sair:"), "encerra o programa")
+        print()
     
     @staticmethod
-    def adicionar_tarefa() -> None:
-        clear_screen()
-        adicionar_tarefa()
+    def adicionar_tarefa(*_) -> None:
+        comandos.edicao.adicionar_tarefa()
 
     @staticmethod
-    def adicionar_lista() -> None:
-        clear_screen()
-        adicionar_lista()
+    def adicionar_lista(*_) -> None:
+        comandos.edicao.adicionar_lista()
 
     @staticmethod
-    def remover_tarefa() -> None:
-        clear_screen()
-        remover_tarefa()
+    def remover_tarefa(*_) -> None:
+        comandos.edicao.remover_tarefa()
 
     @staticmethod
-    def remover_lista() -> None:
-        clear_screen()
-        remover_lista()
+    def remover_lista(*_) -> None:
+        comandos.edicao.remover_lista()
     
     @staticmethod
-    def editar_tarefa() -> None:
-        clear_screen()
-        editar_tarefa()
+    def editar_tarefa(*_) -> None:
+        comandos.edicao.editar_tarefa()
     
     @staticmethod
-    def editar_lista() -> None:
-        clear_screen()
-        editar_lista()
+    def editar_lista(*_) -> None:
+        comandos.edicao.editar_lista()
     
     @staticmethod
-    def concluir_tarefa() -> None:
-        clear_screen()
-        concluir_tarefa()
+    def concluir_tarefa(*_) -> None:
+        comandos.edicao.concluir_tarefa()
     
     @staticmethod
     def ver_lista(*titulo) -> None:
-        clear_screen()
-        ver_lista(*titulo)
+        comandos.visualizacao.ver_lista(*titulo)
     
     @staticmethod
-    def ver_listas() -> None:
-        clear_screen()
-        ver_listas()
+    def ver_listas(*_) -> None:
+        comandos.visualizacao.ver_listas()
     
     @staticmethod
-    def ver_tudo() -> None:
-        clear_screen()
-        ver_tudo()
+    def ver_tudo(*_) -> None:
+        comandos.visualizacao.ver_tudo()
     
     @staticmethod
     def buscar_tarefas(*args) -> None:
-        clear_screen()
-        buscar_tarefas(*args)
+        comandos.busca.buscar_tarefas(*args)
+
+    @staticmethod
+    def limpar_tela(*_) -> None:
+        trm.clear_screen()
 
     @staticmethod
     def sair() -> None:
@@ -116,6 +107,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("Ctrl+C pressionado. Saindo...")
+        print("\n\nCtrl+C pressionado. Saindo...")
         print("Seus dados estão salvos. Até mais!")
+        print()
         exit()

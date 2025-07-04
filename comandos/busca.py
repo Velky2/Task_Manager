@@ -172,5 +172,6 @@ def buscar_tarefas(*args) -> None:
     if not resultados:
         print("Nenhuma tarefa encontrada nessa busca. :/")
         return
-    print("\n>>>>>> RESULTADOS DA BUSCA:\n")
+    print(trm.bold(trm.italic("\n>>>>>> RESULTADOS DA BUSCA:\n")))
     print("\n\n".join(str(tarefa) for tarefa in resultados))
+    print()
