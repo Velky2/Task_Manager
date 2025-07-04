@@ -19,7 +19,7 @@ def encontrar_lista_pelo_id(id: int) -> ListaDeTarefas | None:
     return None
 
 
-def confirmar_id_int():
+def confirmar_id_int() -> int:
     while True:
         try:
             n = int(input("ID: "))
@@ -333,26 +333,29 @@ def concluir_tarefa() -> None:
         concluida=False
     )
 
-    if tarefa.data:
-        match tarefa.repeticao:
-            case Repeticao.DIARIA.value:
-                nova_tarefa.data = tarefa.data + timedelta(days=1)
-            
-            case Repeticao.SEMANAL.value:
-                nova_tarefa.data = tarefa.data + timedelta(weeks=1)
-            
-            case Repeticao.MENSAL.value:
-                nova_tarefa.data = tarefa.data + timedelta(days=30)
-            
-            case Repeticao.ANUAL.value:
-                try:
-                    nova_tarefa.data = tarefa.data.replace(
-                            year=tarefa.data.year + 1)
-                except ValueError:
-                    # happens if the date is february 29th
-                    nova_tarefa.data = tarefa.data.replace(
-                            year=tarefa.data.year + 1) + timedelta(days=-1)
+    if tarefa.data is None:
+        tarefa.data = date.today()
+    
+    match tarefa.repeticao:
+        case Repeticao.DIARIA.value:
+            nova_tarefa.data = tarefa.data + timedelta(days=1)
+        
+        case Repeticao.SEMANAL.value:
+            nova_tarefa.data = tarefa.data + timedelta(weeks=1)
+        
+        case Repeticao.MENSAL.value:
+            nova_tarefa.data = tarefa.data + timedelta(days=30)
+        
+        case Repeticao.ANUAL.value:
+            try:
+                nova_tarefa.data = tarefa.data.replace(
+                        year=tarefa.data.year + 1)
+            except ValueError:
+                # happens if the date is february 29th
+                nova_tarefa.data = tarefa.data.replace(
+                        year=tarefa.data.year + 1) + timedelta(days=-1)
 
-        lista.adicionar_tarefa(nova_tarefa)
-        print(f"Tarefa concluída! Nova tarefa criada para {nova_tarefa.data.strftime('%d/%m/%Y')}")
-        salvar_mudanças()
+    lista.adicionar_tarefa(nova_tarefa)
+    print(f"Tarefa concluída! Nova tarefa criada para {nova_tarefa.data.strftime('%d/%m/%Y')}")
+
+    salvar_mudanças()
