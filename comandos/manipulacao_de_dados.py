@@ -8,15 +8,15 @@ listas: list[ListaDeTarefas] = []
 arquivo: str = "tarefas.json"
 
 def salvar_dados() -> None:
-        dados = {}
-        for l in listas:
-            tarefas_l = []
-            for t in l.tarefas:
-                tarefas_l.append(t.para_dicio())
-            dados[l.titulo] = tarefas_l
-        
-        with open(arquivo, "w") as f:
-            json.dump(dados, f, indent=4)
+    dados = {}
+    for l in listas:
+        tarefas_l = []
+        for t in l.tarefas:
+            tarefas_l.append(t.para_dicio())
+        dados[l.titulo] = tarefas_l
+    
+    with open(arquivo, "w") as f:
+        json.dump(dados, f, indent=4)
 
 def carregar_dados() -> None:
     global listas
@@ -60,16 +60,16 @@ def carregar_dados() -> None:
         listas = [ListaDeTarefas("Cuba")]
 
 def salvar_mudanças():
-        while True:
-            c = input("Salvar mudanças? (S/N): ")
-            if c == "S" or c == "s":
-                salvar_dados()
-                print("Feito :D")
-                return
-            elif c == "N" or c == "n":
-                print("Ação cancelada")
-                return
-            else:
-                print("Digite S ou N")
+    while True:
+        c = input("Salvar mudanças? (S/N): ")
+        if c == "S" or c == "s":
+            salvar_dados()
+            print("Feito :D")
+            return
+        elif c == "N" or c == "n":
+            print("Ação cancelada")
+            return
+        else:
+            print("Digite S ou N")
 
 carregar_dados()

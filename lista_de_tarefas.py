@@ -1,6 +1,7 @@
 from typing import Callable
 from comandos.edicao import adicionar_tarefa, adicionar_lista, remover_tarefa, remover_lista, editar_tarefa, editar_lista, concluir_tarefa
-from comandos.visualizacao import ver_lista, ver_listas, ver_tudo, buscar_tarefas
+from comandos.visualizacao import ver_lista, ver_listas, ver_tudo
+from comandos.busca import buscar_tarefas
 import terminal_utils as trm
 from terminal_utils import clear_screen
 
@@ -17,11 +18,11 @@ class UserCommands:
         print(trm.bold("=> Remover lista:"), "remove uma lista e as tarefas que nela residem")
         print(trm.bold("=> Editar tarefa:"), "edita os valores de uma tarefa, à mercê do usuário")
         print(trm.bold("=> Editar lista:"), "edita o título de uma lista")
+        print(trm.bold("=> Concluir tarefa:"), "conclui uma tarefa")
         print(trm.bold("=> Ver lista:"), "mostra as tarefas presentes em uma lista") # use the ID and title of a list to search
         print(trm.bold("=> Ver listas:"), "mostra o título e o ID de todas as listas existentes")
         print(trm.bold("=> Ver tudo:"), "mostra todas as listas, as tarefas dentro delas e as propriedades das tarefas")
         print(trm.bold("=> Buscar tarefas:"), "mostra a lista de comandos disponíveis para encontrar tarefas com certas características")
-        print(trm.bold("=> Concluir tarefa:"), "conclui uma tarefa")
 
     @staticmethod
     def limpar_tela() -> None:
@@ -82,6 +83,13 @@ class UserCommands:
         clear_screen()
         buscar_tarefas(*args)
 
+    @staticmethod
+    def sair() -> None:
+        print("Saindo...")
+        print("Seus dados estão salvos. Até mais!")
+        print()
+        exit()
+
 
 def main() -> None:
     UserCommands.ajuda()
@@ -105,4 +113,9 @@ def main() -> None:
         print()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Ctrl+C pressionado. Saindo...")
+        print("Seus dados estão salvos. Até mais!")
+        exit()

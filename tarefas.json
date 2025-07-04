@@ -9,9 +9,9 @@
                 "CC",
                 "mc-102"
             ],
-            "lista_associada": "0",
-            "prioridade": "3",
-            "repeticao": "0",
+            "lista_associada": 0,
+            "prioridade": 3,
+            "repeticao": 0,
             "concluida": false,
             "id": 0
         }
