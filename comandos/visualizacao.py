@@ -1,8 +1,4 @@
-from typing import Callable
-from datetime import date, timedelta
-from classes.tarefa import Tarefa
 from comandos.manipulacao_de_dados import listas
-import terminal_utils as trm
 
 def ver_lista(*titulo) -> None:
     titulo: str = " ".join(titulo).strip('"').lower()
@@ -12,7 +8,6 @@ def ver_lista(*titulo) -> None:
         print(*(f'("{lista.titulo}" - ID: {lista.id})' for lista in listas), sep=" | ")
         return
     
-    print(f"===== Lista: {lista.titulo} =====")
     for lista in listas:
         if titulo == "".join(lista.titulo).lower():
             print(lista)
