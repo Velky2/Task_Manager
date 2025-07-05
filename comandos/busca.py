@@ -1,20 +1,31 @@
+"""Módulo de busca.
+
+Implementa os mecanismos necessários para o comando de busca por tarefas.
+"""
+
 from typing import Callable
 from datetime import date, timedelta
 from classes.tarefa import Tarefa
 from comandos.manipulacao_de_dados import listas
 import terminal_utils as trm
 
-def gerar_filtro_texto(valor: str) -> Callable:
-    return (lambda tarefa, valor=valor:
-                valor in tarefa.titulo.lower()
-                or valor in tarefa.nota.lower()
-                or any((valor in tag.lower()) for tag in tarefa.tags))
+def gerar_filtro_texto(texto: str) -> Callable:
+    """Retorna uma função de filtro que pode ser usada para checar
+    se o texto da string `valor` está contida em uma dada tarefa.
+    """
+    return (lambda tarefa, texto=texto:
+                texto in tarefa.titulo.lower()
+                or texto in tarefa.nota.lower()
+                or any((texto in tag.lower()) for tag in tarefa.tags))
 
 
-def gerar_filtro_lista_nome(valor: str) -> Callable:
+def gerar_filtro_lista_nome(nome: str) -> Callable:
+    """Retorna uma função de filtro que pode ser usada para checar
+    se uma dada tarefa está associada à lista de nome `valor`.
+    """
     lista_id: int
     for lista in listas:
-        if lista.titulo == valor:
+        if lista.titulo.lower() == nome.lower():
             lista_id = lista.id
             break
     else:
@@ -24,25 +35,40 @@ def gerar_filtro_lista_nome(valor: str) -> Callable:
                 tarefa.lista_associada == lista_id)
 
 
-def gerar_filtro_lista_id(valor: str) -> Callable:
+def gerar_filtro_lista_id(id: str | int) -> Callable:
+    """Retorna uma função de filtro que pode ser usada para checar
+    se uma dada tarefa está associada à lista cujo id é `id`.
+    """
+    try:
+        id = int(id)
+    except ValueError:
+        raise ValueError("ID inválido")
+    
     for lista in listas:
-        if lista.id == valor:
+        if lista.id == id:
             break
     else:
         raise ValueError("Lista não encontrada")
     
-    return (lambda tarefa, valor=valor:
-                tarefa.lista_associada == valor)
+    return (lambda tarefa, id=id: tarefa.lista_associada == id)
 
 
-def gerar_filtro_tags(valor: str) -> Callable:
-    return (lambda tarefa, valor=valor:
+def gerar_filtro_tags(tags: str) -> Callable:
+    """Retorna uma função de filtro que pode ser usada para checar
+    se uma dada tarefa contém a(s) tag(s) da string `tags`.
+    """
+    return (lambda tarefa, tags=tags:
                 all((tag.strip() in tarefa.tags)
-                        for tag in valor.split(",") if tag))
+                        for tag in tags.split(",") if tag))
 
 
 def gerar_filtro_ate_data(valor: str) -> Callable:
+    """Retorna uma função de filtro que pode ser usada para checar
+    se a data de uma dada tarefa é igual ou anterior à data ou prazo
+    fornecido pela string `valor`.
+    """
     target_date: date
+    
     match valor.upper():
         case "HOJE":
             target_date = date.today()
@@ -56,17 +82,56 @@ def gerar_filtro_ate_data(valor: str) -> Callable:
                 print('Data inválida! Use "HOJE", "7 DIAS" ou' \
                     ' uma data no formato "DD/MM/AAAA".')
                 return
+    
     return (lambda tarefa, target_date=target_date:
                 tarefa.data <= target_date)
 
 
 def gerar_filtro_concluida(valor: str) -> Callable:
+    """Retorna uma função de filtro que pode ser usada para checar
+    se uma dada tarefa está ou não concluída (a depender do `valor`,
+    que pode indicar sim ou não).
+    """
     concluida: bool = valor.startswith("s")
     return (lambda tarefa, concluida=concluida:
                 tarefa.concluida == concluida)
 
 
-def gerar_busca(words: list[str]) -> tuple[list[Callable], Callable]:
+def obter_filtro(tipo: str, valor: str) -> Callable | None:
+    """Obtém uma função de filtro do tipo `tipo` a partir do valor `valor`."""
+    match tipo:
+        case "TEXTO":
+            return gerar_filtro_texto(valor)
+        case "LISTA_NOME":
+            try:
+                return gerar_filtro_lista_nome(valor)
+            except ValueError:
+                print(f'Lista com título "{valor}" não encontrada!')
+                print(f'Tente rodar "ver listas" para ver as listas disponíveis.')
+                return None
+        case "LISTA_ID":
+            try:
+                return gerar_filtro_lista_id(valor)
+            except ValueError:
+                print(f'Lista com o id "{valor}" não encontrada!')
+                print(f'Tente rodar "ver listas" para ver as listas disponíveis.')
+                return None
+        case "TAGS" | "TAG":
+            return gerar_filtro_tags(valor)
+        case "ATE" | "ATÉ":
+            try:
+                return gerar_filtro_ate_data(valor)
+            except (ValueError, TypeError):
+                print('Data inválida! Use "HOJE", "7 DIAS" ou' \
+                    ' uma data no formato "DD/MM/AAAA".')
+                return None
+        case "CONCLUIDA" | "CONCLUÍDA" | "CONCLUIDAS" | "CONCLUÍDAS":
+            return gerar_filtro_concluida(valor)
+
+
+def gerar_busca(words: list[str]) -> tuple[list[Callable], Callable] | tuple[None, None]:
+    """Obtém todas as funções de filtro necessárias para uma dada busca."""
+
     filtros: list[Callable] = []
 
     # Ordenação padrão é, primariamente, por data
@@ -77,60 +142,32 @@ def gerar_busca(words: list[str]) -> tuple[list[Callable], Callable]:
             )
 
     for i in range(0, len(words) - 1, 2):
+        # extrai cada filtro do input, com o tipo e seu respectivo valor
         tipo: str = words[i].strip(" :").upper()
         valor: str = words[i + 1].lower()
 
-        # TODO: nothing 😎 (i hope), save from organizing
-        match tipo:
-            case "TEXTO":
-                filtros.append(gerar_filtro_texto(valor))
-            
-            case "LISTA_NOME":
-                try:
-                    filtros.append(gerar_filtro_lista_nome(valor))
-                except ValueError:
-                    print(f'Lista com título "{valor}" não encontrada!')
-                    print(f'Tente rodar "ver listas" para ver as listas disponíveis.')
-                    return
-            
-            case "LISTA_ID":
-                try:
-                    filtros.append(gerar_filtro_lista_nome(valor))
-                except ValueError:
-                    print(f'Lista com o id "{valor}" não encontrada!')
-                    print(f'Tente rodar "ver listas" para ver as listas disponíveis.')
-                    return
-            
-            case "TAGS" | "TAG":
-                filtros.append(gerar_filtro_tags(valor))
-            
-            case "ATE" | "ATÉ":
-                try:
-                    filtros.append(gerar_filtro_ate_data(valor))
-                except (ValueError, TypeError):
-                    print('Data inválida! Use "HOJE", "7 DIAS" ou' \
-                        ' uma data no formato "DD/MM/AAAA".')
-                    return
-            
-            case "CONCLUIDA" | "CONCLUÍDA" | "CONCLUIDAS" | "CONCLUÍDAS":
-                filtros.append(gerar_filtro_concluida(valor))
-            
-            case "ORDENAR":
-                # Ordenação padrão já é por data, então só é preciso
-                # mudar quando o usuário quer ordenar por prioridade
-                if valor.upper() == "PRIORIDADE":
-                    sorting_key = lambda tarefa: (
-                            -tarefa.prioridade,
-                            tarefa.data if tarefa.data else date.max,
-                            tarefa.lista_associada,
-                        )
+        if tipo != "ORDENAR":
+            filtro: Callable = obter_filtro(tipo, valor)
+            if not filtro:
+                return None, None
+            filtros.append(filtro)
+        else:
+            # Ordenação padrão já é por data, então só é preciso
+            # mudar quando o usuário quer ordenar por prioridade
+            if valor.upper() == "PRIORIDADE":
+                sorting_key = lambda tarefa: (
+                        -tarefa.prioridade,
+                        tarefa.data if tarefa.data else date.max,
+                        tarefa.lista_associada,
+                    )
     
     return (filtros, sorting_key)
 
 
 def imprimir_ajuda_busca() -> None:
+    """Imprime um tutorial para a utilização do comando de busca."""
     print()
-    print(trm.bold("Uso:"), trm.bold('Buscar tarefas FILTRO1:"filtro" FILTRO2:"outro filtro"'))
+    print(trm.underline(trm.bold("Uso:")), trm.bold('Buscar tarefas FILTRO1:"filtro" FILTRO2:"outro filtro"'))
     print()
     print("- Deve-se incluir aspas ao redor de cada valor de filtro na busca.")
     print("- Deve-se usar um ou múltiplos dos filtros disponíveis:")
@@ -149,10 +186,16 @@ def imprimir_ajuda_busca() -> None:
 
 
 def buscar_tarefas(*args) -> None:
+    """Faz uma busca por tarefas com base nos filtros fornecidos.
+    
+    Imprime os resultados no terminal.
+    """
     texto: str = " ".join(args)
     if not texto:
         imprimir_ajuda_busca()
         return
+    
+    # separa os argumentos do input adequadamente pelas aspas
     words: list[str] = texto.split('"')
     if len(words) == 1:
         print("Certifique-se de usar aspas ao redor de cada valor de filtro na busca.")
@@ -161,7 +204,11 @@ def buscar_tarefas(*args) -> None:
     filtros: list[Callable]
     sorting_key: Callable
     filtros, sorting_key = gerar_busca(words)
+    if filtros is None:
+        return
 
+    # filtra todas as tarefas, guarda apenas as que atendem
+    # a todos os critérios dos filtros, e ordena os resultados
     resultados: list[Tarefa] = []
     for lista in listas:
         for tarefa in lista.tarefas:

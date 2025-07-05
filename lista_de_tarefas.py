@@ -1,3 +1,5 @@
+"""Arquivo principal, usado para executar o Gerenciador de Tarefas."""
+
 from typing import Callable
 import comandos.busca
 import comandos.edicao
@@ -5,8 +7,13 @@ import comandos.visualizacao
 import terminal_utils as trm
 
 class UserCommands:
+    """Classe que contém todos os comandos que podem
+    ser executados pelo usuário.
+    """
+
     @staticmethod
     def ajuda() -> None:
+        """Mostra a lista de comandos disponíveis para o usuário."""
         print()
         print(trm.bold("Digite algum dos comandos no terminal para realizar a ação:"))
         print()
@@ -83,20 +90,30 @@ class UserCommands:
 
 
 def main() -> None:
+    """Função principal do programa."""
     UserCommands.ajuda()
     while True:
+        # recebe o input do usuário e separa suas palavras
         user_input: str = input(trm.bold("manager") + "> ")
         words: list[str] = user_input.lower().split()
+
         if not words:
             continue
+
         if len(words) == 1:
+            # comando de uma só palavra
             command: str = words[0]
             args: tuple = tuple()
         else:
+            # comando de duas palavras
             c1, c2, *args = words
             command: str = f"{c1}_{c2}"
+        
+        # checa se o comando existe
         if hasattr(UserCommands, command):
+            # se sim, extrai o método correspondente ao comando
             method: Callable = getattr(UserCommands, command)
+            # executa tal método
             method(*args)
         else:
             print(f'Comando "{trm.bold(user_input.lower())}" não encontrado.')
