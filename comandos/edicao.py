@@ -1,10 +1,11 @@
 from datetime import date, timedelta
-from classes.tarefa import Tarefa, Prioridade, Repeticao
+from classes.tarefa import Tarefa, Repeticao
 from classes.lista import ListaDeTarefas
 from comandos.manipulacao_de_dados import salvar_mudanças, salvar_dados, listas
 import terminal_utils as trm
 
 def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[None, None]:
+    """ Itera sobre todas as listas e tarefas para encontrar uma tarefa pelo ID """
     for l in listas:
         for t in l.tarefas:
             if t.id == id:
@@ -13,6 +14,7 @@ def encontrar_tarefa_pelo_id(id: int) -> tuple[Tarefa, ListaDeTarefas] | tuple[N
 
 
 def encontrar_lista_pelo_id(id: int) -> ListaDeTarefas | None:
+    """ Itera sobre as listas para encontrar uma lista pelo ID. """
     for l in listas:
         if l.id == id:
             return l
@@ -20,6 +22,7 @@ def encontrar_lista_pelo_id(id: int) -> ListaDeTarefas | None:
 
 
 def confirmar_id_int() -> int:
+    """ Solicita e valida a entrada de um ID como um número interio. """
     while True:
         try:
             n = int(input("ID: "))
@@ -30,6 +33,7 @@ def confirmar_id_int() -> int:
 
 
 def adicionar_tarefa() -> None:
+    """ Adiciona uma nova tarefa a uma lista existente. """
     while True:
         titulo = input("Escolha um título: ")
         if titulo == "":
@@ -105,6 +109,7 @@ def adicionar_tarefa() -> None:
 
 
 def adicionar_lista() -> None:
+    """ Adiciona uma nova lista de tarefas. """
     while True:
         p = True
         novo_titulo = input(trm.bold(("Digite o título: ")))
@@ -124,6 +129,7 @@ def adicionar_lista() -> None:
 
 
 def remover_tarefa() -> None:
+    """ Remove uma tarefa existente e as tarefas dentro dela. """
     print(trm.bold("Escolha a tarefa que deseja remover:"))
     for l in listas:
         for t in l.tarefas:
@@ -141,6 +147,7 @@ def remover_tarefa() -> None:
 
 
 def remover_lista() -> None:
+    """ Remove uma lista existente"""
     if len(listas) <= 1:
         print()
         print("Somente há uma lista salva, você não pode exclui-la")
@@ -170,6 +177,7 @@ def remover_lista() -> None:
 
 
 def editar_tarefa() -> None:
+    """ Edita os detalhes de uma tarefa existente. """
     print(trm.bold("Selecione a tarefa que deseja editar:"))
     for l in listas:
         for t in l.tarefas:
@@ -270,6 +278,7 @@ def editar_tarefa() -> None:
 
 
 def editar_lista() -> None:
+    """ Edita o título de uma lista existente. """
     print(trm.bold("Selecione a lista que deseja editar:"))
     for l in listas:
         print(f"Título: {l.titulo} | ID: {l.id}")
@@ -302,6 +311,7 @@ def editar_lista() -> None:
 
 
 def concluir_tarefa() -> None:
+    """ Marca uma tarefa como concluída e, se for repetível, cria uma nova tarefa considerqando o tipo de repetição. """
     print(trm.bold("Selecione a tarefa que foi concluída:"))
 
     for l in listas:
@@ -336,6 +346,7 @@ def concluir_tarefa() -> None:
     if tarefa.data is None:
         tarefa.data = date.today()
     
+    # Define a data da nova tarefa com base na repetição
     match tarefa.repeticao:
         case Repeticao.DIARIA.value:
             nova_tarefa.data = tarefa.data + timedelta(days=1)
@@ -351,7 +362,7 @@ def concluir_tarefa() -> None:
                 nova_tarefa.data = tarefa.data.replace(
                         year=tarefa.data.year + 1)
             except ValueError:
-                # happens if the date is february 29th
+                # Caso ano bissexto (29 fev)
                 nova_tarefa.data = tarefa.data.replace(
                         year=tarefa.data.year + 1) + timedelta(days=-1)
 
