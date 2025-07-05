@@ -54,6 +54,7 @@ def adicionar_tarefa() -> None:
         data_str = input("Data (DD/MM/AAAA): ")
 
         if data_str:
+            # Valida o formato da data inserida pelo usuário
             while True:
                 try:
                     dia, mes, ano = map(int, data_str.split('/'))
@@ -69,6 +70,7 @@ def adicionar_tarefa() -> None:
         tags_str = input("Tags (vírgula para separar): ")
         tags = set(tag.strip().lower() for tag in tags_str.split(" "))
         
+        # Loop para validar a entrada de prioridade
         while True:
             try:
                 prioridade = int(input("Prioridade (Sem prioridade = 0 | Baixa = 1 | Média = 2 | Alta = 3): "))
@@ -80,6 +82,7 @@ def adicionar_tarefa() -> None:
                 print("Insira um valor entre 0 e 4")
             else:
                 break
+        # Loop para validar a entrada de repetição
         while True:
             try:
                 repeticao = int(input("Repeticao (Nenhuma = 0 | Diária = 1 | Semanal = 2 | Mensal = 3 | Anual = 4): "))
@@ -91,7 +94,8 @@ def adicionar_tarefa() -> None:
                 print("Insira um valor entre 0 e 4")
             else:
                 break
-            
+        
+        # Cria uma nova instância de Tarefa com os dados coletados
         nova_tarefa = Tarefa(
             titulo=titulo,
             lista_associada=lista_associada,
@@ -119,6 +123,7 @@ def adicionar_lista() -> None:
         if novo_titulo == "":
             print("Digite um título não vazio")
             continue
+        # Verifica se o título já existe
         for l in listas:
             if novo_titulo.lower() == l.titulo.lower():
                 p = False
@@ -206,6 +211,7 @@ def editar_tarefa() -> None:
         print()
         titulo = input(f"Novo título [{tarefa.titulo}]: ")
         
+        # Edição da lista associada, com validação de ID
         while True:
             print("Listas disponíveis:")
             for l in listas:
@@ -232,6 +238,7 @@ def editar_tarefa() -> None:
         
         data_str = input(f"Nova data [{data_obj1}]: ")
         
+        # Validação do novo formato de data
         if data_str:
             while True:
                 try:
@@ -248,6 +255,7 @@ def editar_tarefa() -> None:
         print(f"Novas tags separadas por vírgula [{tarefa.tags}]")
         tags_str = input(f"  (substituirão as antigas): ")
         
+        # Edição e validação da prioridade
         while True:
             prioridade = input(f"Nova prioridade [{tarefa.prioridade}] (Sem prioridade = 0 | Baixa = 1 | Média = 2 | Alta = 3): ")
             if prioridade == "":
@@ -259,6 +267,7 @@ def editar_tarefa() -> None:
             else:
                 break
         
+        # Edição e validação da repetição
         while True:
             repeticao = input(f"Nova repetição [{tarefa.repeticao}] (Nenhuma = 0 | Diária = 1 | Semanal = 2 | Mensal = 3 | Anual = 4): ")
             if repeticao == "":
@@ -273,6 +282,7 @@ def editar_tarefa() -> None:
         if not salvar_mudanças():
             return
 
+        # Atualiza os atributos da tarefa se novos valores forem fornecidos
         if titulo:
             tarefa.titulo = titulo
         if lista_associada:
@@ -305,6 +315,7 @@ def editar_lista() -> None:
     lista = encontrar_lista_pelo_id(lista_id)
     
     if lista:
+        # Loop para garantir que um novo título válido seja fornecido
         while True:
             p = True
             titulo = input("Novo título: ")
@@ -312,7 +323,8 @@ def editar_lista() -> None:
             if not titulo:
                 print("Novo título não inserido")
                 continue
-
+            
+            # Verifica se o novo título já existe
             for l in listas:
                 if l.titulo.lower() == titulo.lower():
                     print("Título já existente, tente novamente")
@@ -336,6 +348,7 @@ def concluir_tarefa() -> None:
     """ Marca uma tarefa como concluída e, se for repetível, cria uma nova tarefa considerqando o tipo de repetição. """
     print(trm.bold("Selecione a tarefa que foi concluída:"))
 
+    # Exibe apenas as tarefas não concluídas
     for l in listas:
         for t in l.tarefas:
             if not t.concluida:
@@ -350,10 +363,12 @@ def concluir_tarefa() -> None:
         return
     tarefa.concluida = True
 
+    # Se a tarefa não for repetível, apenas a marca como concluída
     if tarefa.repeticao == Repeticao.NENHUMA.value:
         print("Tarefa concluída com sucesso!")
         return
     
+    # Cria uma nova instância da tarefa para a próxima repetição
     nova_tarefa = Tarefa(
         titulo=tarefa.titulo,
         lista_associada=tarefa.lista_associada,
