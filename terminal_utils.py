@@ -1,3 +1,5 @@
+"""Módulo para utilidades do terminal."""
+
 import os
 
 def clear_screen() -> None:

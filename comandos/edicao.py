@@ -1,3 +1,8 @@
+"""Módulo de edição.
+
+Contém os mecanismos de manipulação de tarefas pelo usuário.
+"""
+
 from datetime import date, timedelta
 from classes.tarefa import Tarefa, Repeticao
 from classes.lista import ListaDeTarefas

@@ -1,3 +1,8 @@
+"""Módulo de manipulação de dados.
+
+Mecanismos para salvar e carregar dados.
+"""
+
 from datetime import date
 import json
 from classes.lista import ListaDeTarefas

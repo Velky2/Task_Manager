@@ -222,3 +222,6 @@ def buscar_tarefas(*args) -> None:
     print(trm.bold(trm.italic("\n>>>>>> RESULTADOS DA BUSCA:\n")))
     print("\n\n".join(str(tarefa) for tarefa in resultados))
     print()
+    print('Lembrando: você pode rodar os comandos "editar tarefa", "remover tarefa" ou "concluir tarefa" e')
+    print('selecionar o id de qualquer uma das tarefas encontrada na busca!')
+    print()
