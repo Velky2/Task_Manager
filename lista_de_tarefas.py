@@ -2,6 +2,7 @@ from typing import Callable
 import comandos.busca
 import comandos.edicao
 import comandos.visualizacao
+from comandos.manipulacao_de_dados import salvar_dados
 import terminal_utils as trm
 
 class UserCommands:
@@ -77,6 +78,7 @@ class UserCommands:
     @staticmethod
     def sair() -> None:
         print("Saindo...")
+        salvar_dados()
         print("Seus dados estão salvos. Até mais!")
         print()
         exit()

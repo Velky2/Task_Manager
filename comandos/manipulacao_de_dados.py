@@ -8,6 +8,7 @@ listas: list[ListaDeTarefas] = []
 arquivo: str = "tarefas.json"
 
 def salvar_dados() -> None:
+    """ Salva os dados das listas de tarefas em um arquivo JSON. """
     dados = {}
     for l in listas:
         tarefas_l = []
@@ -19,6 +20,7 @@ def salvar_dados() -> None:
         json.dump(dados, f, indent=4)
 
 def carregar_dados() -> None:
+    """ Carrega os dados das listas de tarefas de um arquivo JSON. """
     global listas
     try:
         with open(arquivo, "r") as f:
@@ -60,15 +62,14 @@ def carregar_dados() -> None:
         listas = [ListaDeTarefas("Cuba")]
 
 def salvar_mudanças():
+    """ Pergunta ao usuário se deseja salvar as mudanças, retornando True ou False.  """
     while True:
         c = input("Salvar mudanças? (S/N): ")
         if c == "S" or c == "s":
-            salvar_dados()
-            print("Feito :D")
-            return
+            return True
         elif c == "N" or c == "n":
             print("Ação cancelada")
-            return
+            return False
         else:
             print("Digite S ou N")
 

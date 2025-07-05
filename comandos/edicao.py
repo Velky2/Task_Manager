@@ -102,8 +102,11 @@ def adicionar_tarefa() -> None:
             repeticao=repeticao,
             concluida=False
         )
+        if not salvar_mudanças():
+            return
         lista.adicionar_tarefa(nova_tarefa)
-        salvar_mudanças()
+        salvar_dados()
+        print("Feito :D")
     else:
         print("Lista não encontrada")
 
@@ -121,8 +124,11 @@ def adicionar_lista() -> None:
                 p = False
         if p:
             nova_lista = ListaDeTarefas(titulo=novo_titulo)
+            if not salvar_mudanças():
+                return
             listas.append(nova_lista)
-            salvar_mudanças()
+            salvar_dados()
+            print("Feito :D")
             return
         else:
             print("Já existe uma lista com esse título, tente novamente")
@@ -140,8 +146,11 @@ def remover_tarefa() -> None:
     tarefa, lista = encontrar_tarefa_pelo_id(tarefa_id)
 
     if tarefa and lista:
+        if not salvar_mudanças():
+            return
         lista.remover_tarefa(tarefa.id)
-        salvar_mudanças()
+        salvar_dados()
+        print("Feito :D")
     else:
         print("Tarefa não encontrada")
 
@@ -162,22 +171,25 @@ def remover_lista() -> None:
     lista = encontrar_lista_pelo_id(lista_id)
 
     if lista:
-        confirmacao = input("Apagar a lista também excluirá todas as tarefas contidas nela. Você quer continuar com a ação? (S/N): ")
         while True:
+            confirmacao = input("Apagar a lista também excluirá todas as tarefas contidas nela. Você quer continuar com a ação? (S/N): ")
             if confirmacao == "S" or confirmacao == "s":
                 listas.remove(lista)
                 salvar_dados()
                 print("Feito :D")
+                return
             elif confirmacao == "N" or confirmacao == "n":
                 print("Ação cancelada")
+                return
             else:
                 print("Digite S ou N")
+                print()
     else:
         print("Lista não encontrada")
 
 
 def editar_tarefa() -> None:
-    """ Edita os detalhes de uma tarefa existente. """
+    """ Edita os atributos de uma tarefa existente. """
     print(trm.bold("Selecione a tarefa que deseja editar:"))
     for l in listas:
         for t in l.tarefas:
@@ -258,6 +270,9 @@ def editar_tarefa() -> None:
             else:
                 break
         
+        if not salvar_mudanças():
+            return
+
         if titulo:
             tarefa.titulo = titulo
         if lista_associada:
@@ -272,7 +287,9 @@ def editar_tarefa() -> None:
             tarefa.prioridade = prioridade
         if repeticao:    
             tarefa.repeticao = repeticao
-        salvar_mudanças()
+        
+        salvar_dados()
+        print("Feito :D")
     else:
         print("Tarefa não encontrada")
 
@@ -303,9 +320,14 @@ def editar_lista() -> None:
                     break
             if p:
                 break
-
+        
+        if not salvar_mudanças():
+            return
+        
         lista.titulo = titulo
-        salvar_mudanças()
+
+        salvar_dados()
+        print("Feito :D")
     else:
         print("Lista não encontrada")
 
@@ -366,7 +388,10 @@ def concluir_tarefa() -> None:
                 nova_tarefa.data = tarefa.data.replace(
                         year=tarefa.data.year + 1) + timedelta(days=-1)
 
+    if not salvar_mudanças():
+        return
+    
     lista.adicionar_tarefa(nova_tarefa)
     print(f"Tarefa concluída! Nova tarefa criada para {nova_tarefa.data.strftime('%d/%m/%Y')}")
 
-    salvar_mudanças()
+    salvar_dados()
